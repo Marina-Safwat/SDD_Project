@@ -1,19 +1,18 @@
 import 'package:flutter/material.dart';
-import 'package:smp/screens/app.dart';
-// import 'package:smp/screens/home.dart';
+import 'package:smp/screens/login/login_screen.dart';
 
 void main() {
-  runApp(const Smp());
+  runApp(const MyApp());
 }
 
-class Smp extends StatelessWidget {
-  const Smp({super.key});
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
 
+  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return const MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: MyApp(),
+      home: LoginScreen(),
     );
   }
 }
