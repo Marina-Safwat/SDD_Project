@@ -1,18 +1,19 @@
 import 'package:flutter/material.dart';
-import 'package:smp/home.dart';
+import 'package:smp/screens/app.dart';
+// import 'package:smp/screens/home.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(const Smp());
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class Smp extends StatelessWidget {
+  const Smp({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return const MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: HomePage(),
+      home: MyApp(),
     );
   }
 }
