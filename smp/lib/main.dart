@@ -6,8 +6,8 @@ void main() {
   runApp(
     const MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: LoginScreen(),
-      // home: MyApp(),
+      // home: LoginScreen(),
+      home: MyApp(),
     ),
   );
 }

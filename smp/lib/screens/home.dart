@@ -1,9 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:smp/models/music.dart';
 import 'package:smp/services/category_operations.dart';
 import 'package:smp/models/category.dart';
+import 'package:smp/services/music_operations.dart';
 
 class Home extends StatelessWidget {
-  const Home({super.key});
+  Function _miniPlayer;
+  Home(
+      this._miniPlayer); // passing the miniplayer in home using dart constructor ShortHand
+  // const Home({super.key});
   Widget createCategory(Category category) {
     return Container(
       color: Color.fromARGB(255, 243, 196, 215),
@@ -34,12 +39,65 @@ class Home extends StatelessWidget {
         .toList();
     return categories;
   }
-  // Widget createMusic (String label){}
+
+  Widget createMusic(Music music) {
+    return Padding(
+      padding: const EdgeInsets.only(right: 15, left: 0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+              height: 200,
+              width: 200,
+              child: InkWell(
+                  onTap: () {
+                    _miniPlayer(music, stop: true);
+                  },
+                  child: Image.network(music.image, fit: BoxFit.cover))),
+          Text(
+            music.name,
+            style: TextStyle(color: Colors.white, fontSize: 16),
+          ),
+          Text(
+            music.description,
+            style: TextStyle(color: Colors.white),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget createMusicList(String label) {
+    List<Music> musicList = MusicOperations.getMusic();
+    return Padding(
+      padding: const EdgeInsets.only(left: 15),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            label,
+            style: TextStyle(color: Colors.white, fontSize: 20),
+          ),
+          Container(
+            height: 300,
+            child: ListView.builder(
+              padding: EdgeInsets.all(5),
+              scrollDirection: Axis.horizontal,
+              itemBuilder: (ctx, index) {
+                return createMusic(musicList[index]);
+              },
+              itemCount: musicList.length,
+            ),
+          )
+        ],
+      ),
+    );
+  }
 
   Widget createGrid() {
     return Container(
       padding: EdgeInsets.all(10),
-      height: 400,
+      height: 285,
       child: GridView.count(
         childAspectRatio: 5 / 2,
         crossAxisSpacing: 10,
@@ -66,24 +124,28 @@ class Home extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-        child: Container(
-      child: Column(
-        children: [
-          createAppBar('Good Morning'),
-          SizedBox(
-            height: 5,
-          ),
-          createGrid(),
-        ],
-      ),
-      decoration: BoxDecoration(
-          gradient: LinearGradient(
-              colors: [Colors.blueGrey.shade100, Color(0xFFC34B7C)],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              stops: [0.1, 0.3])),
-      // color: Colors.red,
-    ));
+    return SingleChildScrollView(
+      child: SafeArea(
+          child: Container(
+        child: Column(
+          children: [
+            createAppBar('Good Morning'),
+            SizedBox(
+              height: 5,
+            ),
+            createGrid(),
+            createMusicList('Recommended For Your '),
+            createMusicList('Popular Playlist'),
+          ],
+        ),
+        decoration: BoxDecoration(
+            gradient: LinearGradient(
+                colors: [Colors.blueGrey.shade100, Color(0xFFC34B7C)],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                stops: [0.1, 0.3])),
+        // color: Colors.red,
+      )),
+    );
   }
 }
