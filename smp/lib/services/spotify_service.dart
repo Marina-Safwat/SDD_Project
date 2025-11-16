@@ -1,331 +1,214 @@
-// import 'dart:convert';
-// import 'package:http/http.dart' as http;
-// import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:smp/models/music.dart';
 
-// class SpotifyService {
-//   static const String clientId = '00d9339a74664b5e91c16b531b6547f3';
-//   static const String clientSecret = '72f3b5e5095941029a8ecb4e436e16a9';
-//   static const String redirectUri = ' smartmusicplayer://callback';
+class SpotifyService {
+  static const String clientId = '00d9339a74664b5e91c16b531b6547f3';
+  static const String clientSecret = '72f3b5e5095941029a8ecb4e436e16a9';
+  static const String redirectUri = 'smartmusicplayer://callback';
 
-//   String? _accessToken;
-//   String? _refreshToken;
+  String? _accessToken;
+  DateTime? _tokenExpiry;
 
-//   // Authenticate and get access token
-//   Future<bool> authenticate(String code) async {
-//     try {
-//       final response = await http.post(
-//         Uri.parse('https://accounts.spotify.com/api/token'),
-//         headers: {
-//           'Authorization':
-//               'Basic ${base64Encode(utf8.encode('$clientId:$clientSecret'))}',
-//           'Content-Type': 'application/x-www-form-urlencoded',
-//         },
-//         body: {
-//           'grant_type': 'authorization_code',
-//           'code': code,
-//           'redirect_uri': redirectUri,
-//         },
-//       );
+  /// Authenticate using Client Credentials Flow
+  Future<bool> authenticate() async {
+    try {
+      final response = await http.post(
+        Uri.parse('https://accounts.spotify.com/api/token'),
+        headers: {
+          'Authorization':
+              'Basic ${base64Encode(utf8.encode('$clientId:$clientSecret'))}',
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: {'grant_type': 'client_credentials'},
+      );
 
-//       if (response.statusCode == 200) {
-//         final data = jsonDecode(response.body);
-//         _accessToken = data['access_token'];
-//         _refreshToken = data['refresh_token'];
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        _accessToken = data['access_token'];
+        _tokenExpiry =
+            DateTime.now().add(Duration(seconds: data['expires_in'] ?? 3600));
+        print('✅ Spotify authenticated successfully!');
+        return true;
+      } else {
+        print('❌ Authentication failed: ${response.body}');
+      }
+    } catch (e) {
+      print('❌ Error authenticating: $e');
+    }
+    return false;
+  }
 
-//         // Save tokens
-//         final prefs = await SharedPreferences.getInstance();
-//         await prefs.setString('access_token', _accessToken!);
-//         await prefs.setString('refresh_token', _refreshToken!);
+  bool _isTokenValid() {
+    if (_accessToken == null || _tokenExpiry == null) return false;
+    return DateTime.now().isBefore(_tokenExpiry!);
+  }
 
-//         return true;
-//       }
-//     } catch (e) {
-//       print('Authentication error: $e');
-//     }
-//     return false;
-//   }
+  Future<void> _ensureAuthenticated() async {
+    if (!_isTokenValid()) {
+      await authenticate();
+    }
+  }
 
-//   // Load saved token
-//   Future<bool> loadToken() async {
-//     final prefs = await SharedPreferences.getInstance();
-//     _accessToken = prefs.getString('access_token');
-//     _refreshToken = prefs.getString('refresh_token');
-//     return _accessToken != null;
-//   }
+  /// Convert a Spotify track JSON object into your Music model
+  Music _convertToMusic(Map<String, dynamic> track) {
+    final artists = ((track['artists'] ?? []) as List)
+        .map((a) => a['name']?.toString() ?? '')
+        .where((s) => s.isNotEmpty)
+        .join(', ');
 
-//   // Get Currently Playing Track
-//   Future<Track?> getCurrentlyPlaying() async {
-//     if (_accessToken == null) return null;
+    final images = (track['album']?['images'] ?? []) as List;
+    final imageUrl = images.isNotEmpty ? images[0]['url'] as String : '';
 
-//     try {
-//       final response = await http.get(
-//         Uri.parse('https://api.spotify.com/v1/me/player/currently-playing'),
-//         headers: {'Authorization': 'Bearer $_accessToken'},
-//       );
+    final albumName = track['album']?['name'] ?? '';
 
-//       if (response.statusCode == 200 && response.body.isNotEmpty) {
-//         final data = jsonDecode(response.body);
-//         return Track.fromJson(data['item']);
-//       }
-//     } catch (e) {
-//       print('Error getting currently playing: $e');
-//     }
-//     return null;
-//   }
+    // audioURL is preview_url when available, otherwise empty string
+    final audioUrl = (track['preview_url'] ?? '') as String;
 
-//   // Get User's Playlists
-//   Future<List<Playlist>> getUserPlaylists() async {
-//     if (_accessToken == null) return [];
+    final mood = _detectMood(track);
 
-//     try {
-//       final response = await http.get(
-//         Uri.parse('https://api.spotify.com/v1/me/playlists?limit=50'),
-//         headers: {'Authorization': 'Bearer $_accessToken'},
-//       );
+    return Music(
+      track['name'] ?? '',
+      artists,
+      imageUrl,
+      albumName,
+      audioUrl,
+      mood,
+    );
+  }
 
-//       if (response.statusCode == 200) {
-//         final data = jsonDecode(response.body);
-//         return (data['items'] as List)
-//             .map((item) => Playlist.fromJson(item))
-//             .toList();
-//       }
-//     } catch (e) {
-//       print('Error getting playlists: $e');
-//     }
-//     return [];
-//   }
+  /// Simple mood detection using popularity (quick heuristic)
+  String _detectMood(Map<String, dynamic> track) {
+    final popularity = track['popularity'] ?? 0;
+    if (popularity >= 80) return 'Party';
+    if (popularity >= 60) return 'Happy';
+    if (popularity >= 40) return 'Chill';
+    return 'Peaceful';
+  }
 
-//   // Get Playlist Tracks
-//   Future<List<music>> getPlaylistmusics(String playlistId) async {
-//     if (_accessToken == null) return [];
+  /// Generic search (returns tracks mapped to Music)
+  Future<List<Music>> searchTracks(String query, {int limit = 20}) async {
+    await _ensureAuthenticated();
+    if (_accessToken == null) return [];
 
-//     try {
-//       final response = await http.get(
-//         Uri.parse('https://api.spotify.com/v1/playlists/$playlistId/musics'),
-//         headers: {'Authorization': 'Bearer $_accessToken'},
-//       );
+    try {
+      final encoded = Uri.encodeQueryComponent(query);
+      final url =
+          'https://api.spotify.com/v1/search?q=$encoded&type=track&market=US&limit=${limit.clamp(1, 50)}';
+      final resp = await http.get(Uri.parse(url),
+          headers: {'Authorization': 'Bearer $_accessToken'});
 
-//       if (response.statusCode == 200) {
-//         final data = jsonDecode(response.body);
-//         return (data['items'] as List)
-//             .map((item) => music.fromJson(item['music']))
-//             .toList();
-//       }
-//     } catch (e) {
-//       print('Error getting playlist musics: $e');
-//     }
-//     return [];
-//   }
+      if (resp.statusCode == 200) {
+        final data = jsonDecode(resp.body);
+        final items = (data['tracks']?['items'] ?? []) as List;
+        final tracks = items.map((t) => _convertToMusic(t)).toList();
+        print('🎧 searchTracks("$query") loaded ${tracks.length} items');
+        return tracks;
+      } else {
+        print('❌ searchTracks failed: ${resp.statusCode} ${resp.body}');
+      }
+    } catch (e) {
+      print('❌ Error in searchTracks: $e');
+    }
+    return [];
+  }
 
-//   // Search musics
-//   Future<List<music>> searchmusics(String query) async {
-//     if (_accessToken == null) return [];
+  /// Wrapper: try to fetch Top 50 Global playlist; if it fails (e.g. permission),
+  /// fallback to a search query ("top hits") so the app still shows songs.
+  Future<List<Music>> getTop50Global({int limit = 20}) async {
+    // playlist id for Top 50 Global
+    const playlistId = '37i9dQZEVXbMDoHDwVN2tF';
+    final playlistTracks = await getPlaylistTracks(playlistId,
+        limit: limit, fallbackToSearch: false);
+    if (playlistTracks.isNotEmpty) return playlistTracks;
 
-//     try {
-//       final response = await http.get(
-//         Uri.parse(
-//             'https://api.spotify.com/v1/search?q=$query&type=music&limit=20'),
-//         headers: {'Authorization': 'Bearer $_accessToken'},
-//       );
+    // fallback search
+    print('ℹ Falling back to search "top hits" (playlist failed or empty)');
+    return await searchTracks('top hits', limit: limit);
+  }
 
-//       if (response.statusCode == 200) {
-//         final data = jsonDecode(response.body);
-//         return (data['musics']['items'] as List)
-//             .map((item) => music.fromJson(item))
-//             .toList();
-//       }
-//     } catch (e) {
-//       print('Error searching musics: $e');
-//     }
-//     return [];
-//   }
+  /// Get tracks from a playlist (tries playlist endpoint; on failure can fallback)
+  Future<List<Music>> getPlaylistTracks(String playlistId,
+      {int limit = 20, bool fallbackToSearch = true}) async {
+    await _ensureAuthenticated();
+    if (_accessToken == null) return [];
 
-//   // Get User's Top musics
-//   Future<List<music>> getTopmusics() async {
-//     if (_accessToken == null) return [];
+    try {
+      final url = Uri.parse(
+          'https://api.spotify.com/v1/playlists/$playlistId/tracks?market=US&limit=50');
+      final resp = await http
+          .get(url, headers: {'Authorization': 'Bearer $_accessToken'});
 
-//     try {
-//       final response = await http.get(
-//         Uri.parse('https://api.spotify.com/v1/me/top/musics?limit=20'),
-//         headers: {'Authorization': 'Bearer $_accessToken'},
-//       );
+      if (resp.statusCode == 200) {
+        final data = jsonDecode(resp.body);
+        final items = (data['items'] ?? []) as List;
+        final tracks = items
+            .where((it) => it != null && it['track'] != null)
+            .map((it) => _convertToMusic(it['track']))
+            .take(limit)
+            .toList();
+        print('🎵 Playlist $playlistId loaded ${tracks.length} tracks');
+        return tracks;
+      } else {
+        // If playlist endpoint returns 404 or other (no permission), optionally fallback
+        print(
+            '❌ Playlist fetch failed (status ${resp.statusCode}). Body: ${resp.body}');
+        if (fallbackToSearch) {
+          // try a search fallback
+          return await searchTracks('top hits', limit: limit);
+        }
+      }
+    } catch (e) {
+      print('❌ Error fetching playlist tracks: $e');
+      if (fallbackToSearch) {
+        return await searchTracks('top hits', limit: limit);
+      }
+    }
 
-//       if (response.statusCode == 200) {
-//         final data = jsonDecode(response.body);
-//         return (data['items'] as List)
-//             .map((item) => music.fromJson(item))
-//             .toList();
-//       }
-//     } catch (e) {
-//       print('Error getting top musics: $e');
-//     }
-//     return [];
-//   }
+    return [];
+  }
 
-//   // Play music
-//   Future<bool> playmusic(String musicUri) async {
-//     if (_accessToken == null) return false;
+  /// Optional: get track details by id (useful if you want to call audio features)
+  Future<Music?> getTrackDetails(String trackId) async {
+    await _ensureAuthenticated();
+    if (_accessToken == null) return null;
+    try {
+      final url =
+          Uri.parse('https://api.spotify.com/v1/tracks/$trackId?market=US');
+      final resp = await http
+          .get(url, headers: {'Authorization': 'Bearer $_accessToken'});
+      if (resp.statusCode == 200) {
+        final track = jsonDecode(resp.body) as Map<String, dynamic>;
+        return _convertToMusic(track);
+      }
+    } catch (e) {
+      print('❌ Error getTrackDetails: $e');
+    }
+    return null;
+  }
 
-//     try {
-//       final response = await http.put(
-//         Uri.parse('https://api.spotify.com/v1/me/player/play'),
-//         headers: {
-//           'Authorization': 'Bearer $_accessToken',
-//           'Content-Type': 'application/json',
-//         },
-//         body: jsonEncode({
-//           'uris': [musicUri]
-//         }),
-//       );
+  /// Map moods → best search queries
+  String _moodToQuery(String mood) {
+    final map = {
+      'happy': 'happy upbeat pop',
+      'sad': 'sad emotional',
+      'chill': 'lofi chill relax',
+      'energetic': 'energetic workout pop',
+      'romantic': 'romantic love songs',
+      'angry': 'angry rock metal',
+      'peaceful': 'relax calm ambient',
+      'party': 'party dance edm',
+      'motivational': 'motivational inspire',
+      'nostalgic': 'nostalgic throwback',
+    };
+    return map[mood.toLowerCase()] ?? mood;
+  }
 
-//       return response.statusCode == 204;
-//     } catch (e) {
-//       print('Error playing music: $e');
-//     }
-//     return false;
-//   }
-
-//   // Pause Playback
-//   Future<bool> pausePlayback() async {
-//     if (_accessToken == null) return false;
-
-//     try {
-//       final response = await http.put(
-//         Uri.parse('https://api.spotify.com/v1/me/player/pause'),
-//         headers: {'Authorization': 'Bearer $_accessToken'},
-//       );
-
-//       return response.statusCode == 204;
-//     } catch (e) {
-//       print('Error pausing: $e');
-//     }
-//     return false;
-//   }
-
-//   // Resume Playback
-//   Future<bool> resumePlayback() async {
-//     if (_accessToken == null) return false;
-
-//     try {
-//       final response = await http.put(
-//         Uri.parse('https://api.spotify.com/v1/me/player/play'),
-//         headers: {'Authorization': 'Bearer $_accessToken'},
-//       );
-
-//       return response.statusCode == 204;
-//     } catch (e) {
-//       print('Error resuming: $e');
-//     }
-//     return false;
-//   }
-
-//   // Next Track
-//   Future<bool> nextTrack() async {
-//     if (_accessToken == null) return false;
-
-//     try {
-//       final response = await http.post(
-//         Uri.parse('https://api.spotify.com/v1/me/player/next'),
-//         headers: {'Authorization': 'Bearer $_accessToken'},
-//       );
-
-//       return response.statusCode == 204;
-//     } catch (e) {
-//       print('Error skipping to next: $e');
-//     }
-//     return false;
-//   }
-
-//   // Previous Track
-//   Future<bool> previousTrack() async {
-//     if (_accessToken == null) return false;
-
-//     try {
-//       final response = await http.post(
-//         Uri.parse('https://api.spotify.com/v1/me/player/previous'),
-//         headers: {'Authorization': 'Bearer $_accessToken'},
-//       );
-
-//       return response.statusCode == 204;
-//     } catch (e) {
-//       print('Error going to previous: $e');
-//     }
-//     return false;
-//   }
-
-//   // Check if track is saved (liked)
-//   Future<bool> isTrackSaved(String trackId) async {
-//     if (_accessToken == null) return false;
-
-//     try {
-//       final response = await http.get(
-//         Uri.parse('https://api.spotify.com/v1/me/tracks/contains?ids=$trackId'),
-//         headers: {'Authorization': 'Bearer $_accessToken'},
-//       );
-
-//       if (response.statusCode == 200) {
-//         final data = jsonDecode(response.body);
-//         return data[0] as bool;
-//       }
-//     } catch (e) {
-//       print('Error checking if track is saved: $e');
-//     }
-//     return false;
-//   }
-
-//   // Save track (like)
-//   Future<bool> saveTrack(String trackId) async {
-//     if (_accessToken == null) return false;
-
-//     try {
-//       final response = await http.put(
-//         Uri.parse('https://api.spotify.com/v1/me/tracks?ids=$trackId'),
-//         headers: {'Authorization': 'Bearer $_accessToken'},
-//       );
-
-//       return response.statusCode == 200;
-//     } catch (e) {
-//       print('Error saving track: $e');
-//     }
-//     return false;
-//   }
-
-//   // Remove saved track (unlike)
-//   Future<bool> removeSavedTrack(String trackId) async {
-//     if (_accessToken == null) return false;
-
-//     try {
-//       final response = await http.delete(
-//         Uri.parse('https://api.spotify.com/v1/me/tracks?ids=$trackId'),
-//         headers: {'Authorization': 'Bearer $_accessToken'},
-//       );
-
-//       return response.statusCode == 200;
-//     } catch (e) {
-//       print('Error removing saved track: $e');
-//     }
-//     return false;
-//   }
-
-//   // Get User's Saved (Liked) Tracks
-//   Future<List<Track>> getSavedTracks() async {
-//     if (_accessToken == null) return [];
-
-//     try {
-//       final response = await http.get(
-//         Uri.parse('https://api.spotify.com/v1/me/tracks?limit=50'),
-//         headers: {'Authorization': 'Bearer $_accessToken'},
-//       );
-
-//       if (response.statusCode == 200) {
-//         final data = jsonDecode(response.body);
-//         return (data['items'] as List)
-//             .map((item) => Track.fromJson(item['track']))
-//             .toList();
-//       }
-//     } catch (e) {
-//       print('Error getting saved tracks: $e');
-//     }
-//     return [];
-//   }
-// }
+  /// 🎵 **MAIN FEATURE** → FETCH SONGS BASED ON MOOD
+  Future<List<Music>> getTracksByMood(String mood, {int limit = 20}) async {
+    final query = _moodToQuery(mood);
+    print("🔎 Searching Spotify for mood: $mood → '$query'");
+    return await searchTracks(query, limit: limit);
+  }
+}

@@ -4,6 +4,7 @@ import 'package:smp/models/music.dart';
 import 'package:smp/screens/home.dart';
 import 'package:smp/screens/playerScreen.dart';
 import 'package:smp/screens/search.dart';
+import 'package:smp/screens/test_spotify.dart';
 import 'package:smp/screens/yourLibrary.dart';
 
 class MyApp extends StatefulWidget {
@@ -111,7 +112,7 @@ class _MyAppState extends State<MyApp> {
   @override
   initState() {
     super.initState();
-    Tabs = [Home(miniPlayer), Search(), Library()];
+    Tabs = [Home(miniPlayer), Search(), Library(), TestSpotify()];
   }
 
   // UIDesign code
@@ -135,6 +136,7 @@ class _MyAppState extends State<MyApp> {
             selectedItemColor: Colors.white,
             unselectedItemColor: Colors.black,
             backgroundColor: Colors.black45,
+            type: BottomNavigationBarType.fixed,
             items: const [
               BottomNavigationBarItem(
                   icon: Icon(Icons.home, color: Colors.white), label: 'Home'),
@@ -145,6 +147,10 @@ class _MyAppState extends State<MyApp> {
               BottomNavigationBarItem(
                 icon: Icon(Icons.library_add, color: Colors.white),
                 label: 'Library',
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.bug_report, color: Colors.white),
+                label: 'Test',
               ),
             ],
           ),

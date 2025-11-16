@@ -3,12 +3,36 @@ import 'package:smp/models/music.dart';
 import 'package:smp/services/category_operations.dart';
 import 'package:smp/models/category.dart';
 import 'package:smp/services/music_operations.dart';
+import 'package:smp/services/spotify_service.dart';
 
-class Home extends StatelessWidget {
-  Function _miniPlayer;
-  Home(
-      this._miniPlayer); // passing the miniplayer in home using dart constructor ShortHand
-  // const Home({super.key});
+class Home extends StatefulWidget {
+  final Function _miniPlayer;
+  Home(this._miniPlayer);
+
+  @override
+  _HomeState createState() => _HomeState();
+}
+
+class _HomeState extends State<Home> {
+  List<Music> spotifyTracks = [];
+  bool isLoading = true;
+
+  final SpotifyService _spotifyService = SpotifyService();
+
+  @override
+  void initState() {
+    super.initState();
+    _loadSpotifyMusic();
+  }
+
+  void _loadSpotifyMusic() async {
+    List<Music> tracks = await _spotifyService.getTop50Global();
+    setState(() {
+      spotifyTracks = tracks;
+      isLoading = false;
+    });
+  }
+
   Widget createCategory(Category category) {
     return Container(
       color: Color.fromARGB(255, 243, 196, 215),
@@ -51,7 +75,7 @@ class Home extends StatelessWidget {
               width: 200,
               child: InkWell(
                   onTap: () {
-                    _miniPlayer(music, stop: true);
+                    widget._miniPlayer(music, stop: true);
                   },
                   child: Image.network(music.image, fit: BoxFit.cover))),
           Text(
@@ -62,6 +86,10 @@ class Home extends StatelessWidget {
             music.description,
             style: TextStyle(color: Colors.white),
           ),
+          Text(
+            music.mood,
+            style: TextStyle(color: Colors.white),
+          ),
         ],
       ),
     );
@@ -69,6 +97,7 @@ class Home extends StatelessWidget {
 
   Widget createMusicList(String label) {
     List<Music> musicList = MusicOperations.getMusic();
+    List<Music> spotifyTracks = [];
     return Padding(
       padding: const EdgeInsets.only(left: 15),
       child: Column(
@@ -84,9 +113,9 @@ class Home extends StatelessWidget {
               padding: EdgeInsets.all(5),
               scrollDirection: Axis.horizontal,
               itemBuilder: (ctx, index) {
-                return createMusic(musicList[index]);
+                return createMusic(spotifyTracks[index]);
               },
-              itemCount: musicList.length,
+              itemCount: spotifyTracks.length,
             ),
           )
         ],
