@@ -4,10 +4,10 @@ class Button extends StatelessWidget {
   const Button({
     super.key,
     required this.onTap,
-    required this.isLogin,
+    required this.title,
   });
   final void Function() onTap;
-  final bool isLogin;
+  final String title;
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -31,7 +31,7 @@ class Button extends StatelessWidget {
           ),
         ),
         child: Text(
-          isLogin ? 'LOG IN' : 'SIGN UP',
+          title,
           style: const TextStyle(
             color: Colors.black87,
             fontWeight: FontWeight.bold,

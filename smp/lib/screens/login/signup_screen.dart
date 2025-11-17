@@ -4,6 +4,7 @@ import 'package:smp/logic/login/auth_service.dart';
 import 'package:smp/logic/login/pick_screen.dart';
 //import 'package:ra_interview/screens/login/home_screen.dart';
 import 'package:smp/widgets/login/button.dart';
+import 'package:smp/widgets/login/signup_google.dart';
 import 'package:smp/widgets/login/text_field.dart';
 
 class SignupScreen extends StatefulWidget {
@@ -47,6 +48,7 @@ class _SignupScreenState extends State<SignupScreen> {
       extendBodyBehindAppBar: true,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
+        foregroundColor: Colors.white,
         elevation: 0,
         title: const Text(
           'Sign Up',
@@ -116,8 +118,9 @@ class _SignupScreenState extends State<SignupScreen> {
                   onTap: () {
                     signUp(context);
                   },
-                  isLogin: false,
+                  title: "SIGN UP",
                 ),
+                const SignupGoogle(),
               ],
             ),
           ),
