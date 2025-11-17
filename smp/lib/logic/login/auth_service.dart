@@ -1,10 +1,12 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 ValueNotifier<AuthService> authService = ValueNotifier(AuthService());
 
 class AuthService {
   final FirebaseAuth firebaseAuth = FirebaseAuth.instance;
+  final googleSignIn = GoogleSignIn();
 
   User? get currentUser => firebaseAuth.currentUser;
 
@@ -20,6 +22,24 @@ class AuthService {
     );
   }
 
+  signInWithGoogle() async {
+    try {
+      final GoogleSignInAccount? googleSignInAccount =
+          await googleSignIn.signIn();
+      if (googleSignInAccount != null) {
+        final GoogleSignInAuthentication googleSignInAuthentication =
+            await googleSignInAccount.authentication;
+        final AuthCredential authCredential = GoogleAuthProvider.credential(
+            accessToken: googleSignInAuthentication.accessToken,
+            idToken: googleSignInAuthentication.idToken);
+        await firebaseAuth.signInWithCredential(authCredential);
+      }
+    } on FirebaseAuthException catch (e) {
+      print(e.message);
+      throw e;
+    }
+  }
+
   Future<UserCredential> createAccount({
     required String email,
     required String password,
@@ -28,6 +48,11 @@ class AuthService {
       email: email,
       password: password,
     );
+  }
+
+  Future<void> googleSignOut() async {
+    await firebaseAuth.signOut();
+    await googleSignIn.signOut();
   }
 
   Future<void> signOut() async {

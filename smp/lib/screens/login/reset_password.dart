@@ -1,37 +1,35 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:smp/logic/login/auth_service.dart';
-import 'package:smp/logic/login/pick_screen.dart';
 import 'package:smp/widgets/login/button.dart';
-import 'package:smp/widgets/login/forget_password.dart';
-import 'package:smp/widgets/login/logo_widget.dart';
-import 'package:smp/widgets/login/signup_option.dart';
 import 'package:smp/widgets/login/text_field.dart';
 
-class LoginScreen extends StatefulWidget {
-  const LoginScreen({super.key});
+class ResetPassword extends StatefulWidget {
+  const ResetPassword({super.key});
 
   @override
-  State<LoginScreen> createState() {
-    return _LoginScreenState();
-  }
+  State<ResetPassword> createState() => _ResetPasswordState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
-  final TextEditingController _passwordTextController = TextEditingController();
+class _ResetPasswordState extends State<ResetPassword> {
   final TextEditingController _emailTextController = TextEditingController();
   String errorMessage = "";
-  void signIn() async {
+
+  @override
+  void dispose() {
+    _emailTextController.dispose();
+    super.dispose();
+  }
+
+  void signUp(BuildContext context) async {
     try {
-      await authService.value.signIn(
+      await authService.value.resetPassword(
         email: _emailTextController.text,
-        password: _passwordTextController.text,
       );
-      Navigator.push(
-          context, MaterialPageRoute(builder: (context) => const PickScreen()));
+      Navigator.of(context).pop();
     } on FirebaseAuthException catch (e) {
       setState(() {
-        errorMessage = e.message ?? 'This is not working';
+        errorMessage = e.message ?? "An unknown error occurred.";
       });
     }
   }
@@ -39,6 +37,19 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      extendBodyBehindAppBar: true,
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        foregroundColor: Colors.white,
+        elevation: 0,
+        title: const Text(
+          'Sign Up',
+          style: TextStyle(
+            fontSize: 24,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      ),
       body: Container(
         width: MediaQuery.of(context).size.width,
         height: MediaQuery.of(context).size.height,
@@ -58,9 +69,8 @@ class _LoginScreenState extends State<LoginScreen> {
                 20, MediaQuery.of(context).size.height * 0.2, 20, 0),
             child: Column(
               children: [
-                const LogoWidget('assets/images/LOGO.png'),
                 const SizedBox(
-                  height: 30,
+                  height: 20,
                 ),
                 TextFieldWidget(
                   text: "Enter Your Email",
@@ -71,27 +81,19 @@ class _LoginScreenState extends State<LoginScreen> {
                 const SizedBox(
                   height: 20,
                 ),
-                TextFieldWidget(
-                  text: "Enter Password",
-                  icon: Icons.lock_outline,
-                  isPasswordType: true,
-                  controller: _passwordTextController,
-                ),
-                const SizedBox(
-                  height: 10,
-                ),
                 Text(
                   errorMessage,
                   style: const TextStyle(color: Colors.redAccent),
                 ),
-                const ForgetPassword(),
+                const SizedBox(
+                  height: 20,
+                ),
                 Button(
                   onTap: () {
-                    signIn();
+                    signUp(context);
                   },
-                  title: "LOG IN",
+                  title: "RESET PASSWORD",
                 ),
-                const SignupOption(),
               ],
             ),
           ),
