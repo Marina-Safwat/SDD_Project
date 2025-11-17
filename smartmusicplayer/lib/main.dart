@@ -49,8 +49,7 @@ class _PlayerScreenState extends State<PlayerScreen> {
     _audioPlayer.playerStateStream.listen((state) {
       setState(() {
         isPlaying = state.playing;
-        isLoading =
-            state.processingState == ProcessingState.loading ||
+        isLoading = state.processingState == ProcessingState.loading ||
             state.processingState == ProcessingState.buffering;
       });
     });
@@ -276,9 +275,8 @@ class _PlayerScreenState extends State<PlayerScreen> {
                         : Icon(isPlaying ? Icons.pause : Icons.play_arrow),
                     iconSize: 50,
                     color: Colors.white,
-                    onPressed: currentSongName != null
-                        ? _togglePlayPause
-                        : null,
+                    onPressed:
+                        currentSongName != null ? _togglePlayPause : null,
                   ),
                 ),
 
