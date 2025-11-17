@@ -8,7 +8,7 @@ void main() {
     MaterialApp(
       debugShowCheckedModeBanner: false,
       // home: LoginScreen(),
-      home: MoodScreen(),
+      home: MyApp(),
     ),
   );
 }

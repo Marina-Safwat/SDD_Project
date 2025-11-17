@@ -2,6 +2,7 @@ import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:smp/models/music.dart';
 import 'package:smp/screens/home.dart';
+import 'package:smp/screens/mood_screen.dart';
 import 'package:smp/screens/playerScreen.dart';
 import 'package:smp/screens/search.dart';
 import 'package:smp/screens/test_spotify.dart';
@@ -112,7 +113,7 @@ class _MyAppState extends State<MyApp> {
   @override
   initState() {
     super.initState();
-    Tabs = [Home(miniPlayer), Search(), Library(), TestSpotify()];
+    Tabs = [Home(miniPlayer), Search(), Library(), MoodScreen(), TestSpotify()];
   }
 
   // UIDesign code
@@ -147,6 +148,10 @@ class _MyAppState extends State<MyApp> {
               BottomNavigationBarItem(
                 icon: Icon(Icons.library_add, color: Colors.white),
                 label: 'Library',
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.branding_watermark, color: Colors.white),
+                label: 'Mood',
               ),
               BottomNavigationBarItem(
                 icon: Icon(Icons.bug_report, color: Colors.white),
