@@ -113,7 +113,13 @@ class _MyAppState extends State<MyApp> {
   @override
   initState() {
     super.initState();
-    Tabs = [Home(miniPlayer), Search(), Library(), MoodScreen(), TestSpotify()];
+    Tabs = [
+      Home(miniPlayer),
+      SearchSongList(Search: 'Songs'),
+      Library(),
+      MoodScreen(),
+      TestSpotify()
+    ];
   }
 
   // UIDesign code

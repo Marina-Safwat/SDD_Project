@@ -155,26 +155,30 @@ class _HomeState extends State<Home> {
   Widget build(BuildContext context) {
     return SingleChildScrollView(
       child: SafeArea(
-          child: Container(
-        child: Column(
-          children: [
-            createAppBar('Good Morning'),
-            SizedBox(
-              height: 5,
-            ),
-            createGrid(),
-            createMusicList('Recommended For Your '),
-            createMusicList('Popular Playlist'),
-          ],
+        child: Container(
+          child: Column(
+            children: [
+              createAppBar('Good Morning'),
+              SizedBox(
+                height: 5,
+              ),
+              createGrid(),
+              createMusicList('Recommended For Your '),
+              createMusicList('Popular Playlist'),
+            ],
+          ),
+          decoration: BoxDecoration(
+              gradient: LinearGradient(
+                  colors: [
+                    Colors.blueGrey.shade100,
+                    Theme.of(context).primaryColor
+                  ],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  stops: [0.1, 0.3])),
+          // color: Colors.red,
         ),
-        decoration: BoxDecoration(
-            gradient: LinearGradient(
-                colors: [Colors.blueGrey.shade100, Color(0xFFC34B7C)],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                stops: [0.1, 0.3])),
-        // color: Colors.red,
-      )),
+      ),
     );
   }
 }
