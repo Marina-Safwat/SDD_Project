@@ -1,7 +1,9 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:smp/data/data.dart';
 import 'package:smp/logic/login/auth_service.dart';
 import 'package:smp/logic/login/pick_screen.dart';
+import 'package:smp/models/user_profile.dart';
 //import 'package:ra_interview/screens/login/home_screen.dart';
 import 'package:smp/widgets/login/button.dart';
 import 'package:smp/widgets/login/signup_google.dart';
@@ -33,6 +35,8 @@ class _SignupScreenState extends State<SignupScreen> {
         email: _emailTextController.text,
         password: _passwordTextController.text,
       );
+      users[_emailTextController.text] =
+          UserProfile.fromFirebaseUser(FirebaseAuth.instance.currentUser!);
       Navigator.push(
           context, MaterialPageRoute(builder: (context) => const PickScreen()));
     } on FirebaseAuthException catch (e) {
@@ -64,8 +68,8 @@ class _SignupScreenState extends State<SignupScreen> {
         decoration: const BoxDecoration(
           gradient: LinearGradient(
             colors: [
-              Color.fromARGB(255, 109, 13, 142),
-              Colors.deepPurple,
+              Color(0xFFF05A89),
+              Color(0xFF7A36C4),
             ],
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,

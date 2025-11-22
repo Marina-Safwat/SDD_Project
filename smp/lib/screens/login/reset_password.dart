@@ -56,8 +56,8 @@ class _ResetPasswordState extends State<ResetPassword> {
         decoration: const BoxDecoration(
           gradient: LinearGradient(
             colors: [
-              Color.fromARGB(255, 109, 13, 142),
-              Colors.deepPurple,
+              Color(0xFFF05A89),
+              Color(0xFF7A36C4),
             ],
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,

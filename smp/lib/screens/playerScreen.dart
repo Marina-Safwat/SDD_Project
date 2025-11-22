@@ -1,10 +1,10 @@
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:smp/models/music.dart';
+import 'package:smp/models/song.dart';
 
 class PlayerScreen extends StatefulWidget {
-  final Music music;
+  final Song music;
   final AudioPlayer audioPlayer;
   final bool isPlaying;
   final VoidCallback onPlayPause;

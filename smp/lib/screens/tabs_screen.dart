@@ -1,27 +1,26 @@
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
-import 'package:smp/models/music.dart';
-import 'package:smp/screens/home.dart';
-import 'package:smp/screens/mood_screen.dart';
+import 'package:smp/models/song.dart';
+import 'package:smp/screens/home_screen/home_screen.dart';
+import 'package:smp/screens/profile_screen.dart';
+import 'package:smp/screens/mood_screen/mood_screen.dart';
 import 'package:smp/screens/playerScreen.dart';
-import 'package:smp/screens/search.dart';
-import 'package:smp/screens/test_spotify.dart';
-import 'package:smp/screens/yourLibrary.dart';
+import 'package:smp/screens/search_screen/search_screen.dart';
 
-class MyApp extends StatefulWidget {
-  const MyApp({Key? key}) : super(key: key);
+class TabsScreen extends StatefulWidget {
+  const TabsScreen({super.key});
 
   @override
-  _MyAppState createState() => _MyAppState();
+  State<TabsScreen> createState() => _TabsScreenState();
 }
 
-class _MyAppState extends State<MyApp> {
+class _TabsScreenState extends State<TabsScreen> {
   AudioPlayer _audioPlayer = new AudioPlayer();
   var Tabs = [];
-  int currentTabIndex = 0;
+  int currentTabIndex = 2;
   bool isPlaying = false;
-  Music? music;
-  Widget miniPlayer(Music? music, {bool stop = false}) {
+  Song? music;
+  Widget miniPlayer(Song? music, {bool stop = false}) {
     this.music = music;
     setState(() {});
     if (music == null) {
@@ -114,11 +113,10 @@ class _MyAppState extends State<MyApp> {
   initState() {
     super.initState();
     Tabs = [
-      Home(miniPlayer),
-      SearchSongList(Search: 'Songs'),
-      Library(),
+      HomeScreen(), //miniPlayer),
+      SearchScreen(),
       MoodScreen(),
-      TestSpotify()
+      const ProfileScreen(),
     ];
   }
 
@@ -127,11 +125,11 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Tabs[currentTabIndex],
-      backgroundColor: Colors.black,
+      //backgroundColor: Colors.black,
       bottomNavigationBar: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          miniPlayer(music),
+          //miniPlayer(music),
           BottomNavigationBar(
             currentIndex: currentTabIndex,
             onTap: (currentIndex) {
@@ -140,28 +138,26 @@ class _MyAppState extends State<MyApp> {
                 currentTabIndex = currentIndex;
               });
             },
-            selectedItemColor: Colors.white,
-            unselectedItemColor: Colors.black,
-            backgroundColor: Colors.black45,
+            selectedItemColor: Colors.black,
+            //unselectedItemColor: Colors.black,
+            //backgroundColor: Colors.black45,
             type: BottomNavigationBarType.fixed,
             items: const [
               BottomNavigationBarItem(
-                  icon: Icon(Icons.home, color: Colors.white), label: 'Home'),
+                icon: Icon(Icons.home, color: Colors.black26),
+                label: 'Home',
+              ),
               BottomNavigationBarItem(
-                icon: Icon(Icons.search, color: Colors.white),
+                icon: Icon(Icons.search, color: Colors.black26),
                 label: 'Search',
               ),
               BottomNavigationBarItem(
-                icon: Icon(Icons.library_add, color: Colors.white),
-                label: 'Library',
-              ),
-              BottomNavigationBarItem(
-                icon: Icon(Icons.branding_watermark, color: Colors.white),
+                icon: Icon(Icons.branding_watermark, color: Colors.black26),
                 label: 'Mood',
               ),
               BottomNavigationBarItem(
-                icon: Icon(Icons.bug_report, color: Colors.white),
-                label: 'Test',
+                icon: Icon(Icons.person, color: Colors.black26),
+                label: 'Profile',
               ),
             ],
           ),

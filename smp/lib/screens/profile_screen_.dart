@@ -3,14 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:smp/logic/login/auth_service.dart';
 import 'package:smp/screens/login/login_screen.dart';
 
-class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
+class ProfileScreen_ extends StatefulWidget {
+  const ProfileScreen_({super.key});
 
   @override
-  State<HomeScreen> createState() => _HomeScreenState();
+  State<ProfileScreen_> createState() => _ProfileScreen_State();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _ProfileScreen_State extends State<ProfileScreen_> {
   String errorMessage = "";
 
   void logout() async {
@@ -33,6 +33,12 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0.0,
+        title: const Text("Profile"),
+        centerTitle: true,
+      ),
       body: Center(
         child: Column(
           children: [
@@ -46,10 +52,11 @@ class _HomeScreenState extends State<HomeScreen> {
               height: 20,
             ),
             ElevatedButton(
-                onPressed: () {
-                  logout();
-                },
-                child: const Text('Log Out')),
+              onPressed: () {
+                logout();
+              },
+              child: const Text('Log Out'),
+            ),
           ],
         ),
       ),
