@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:smp/models/music.dart';
+import 'package:smp/models/song.dart';
 
 class SpotifyService {
   static const String clientId = '00d9339a74664b5e91c16b531b6547f3';
@@ -52,7 +51,7 @@ class SpotifyService {
   }
 
   /// Convert a Spotify track JSON object into your Music model
-  Music _convertToMusic(Map<String, dynamic> track) {
+  Song _convertToMusic(Map<String, dynamic> track) {
     final artists = ((track['artists'] ?? []) as List)
         .map((a) => a['name']?.toString() ?? '')
         .where((s) => s.isNotEmpty)
@@ -68,7 +67,7 @@ class SpotifyService {
 
     final mood = _detectMood(track);
 
-    return Music(
+    return Song(
       track['name'] ?? '',
       artists,
       imageUrl,
@@ -88,7 +87,7 @@ class SpotifyService {
   }
 
   /// Generic search (returns tracks mapped to Music)
-  Future<List<Music>> searchTracks(String query, {int limit = 20}) async {
+  Future<List<Song>> searchTracks(String query, {int limit = 20}) async {
     await _ensureAuthenticated();
     if (_accessToken == null) return [];
 
@@ -116,7 +115,7 @@ class SpotifyService {
 
   /// Wrapper: try to fetch Top 50 Global playlist; if it fails (e.g. permission),
   /// fallback to a search query ("top hits") so the app still shows songs.
-  Future<List<Music>> getTop50Global({int limit = 20}) async {
+  Future<List<Song>> getTop50Global({int limit = 20}) async {
     // playlist id for Top 50 Global
     const playlistId = '37i9dQZEVXbMDoHDwVN2tF';
     final playlistTracks = await getPlaylistTracks(playlistId,
@@ -129,7 +128,7 @@ class SpotifyService {
   }
 
   /// Get tracks from a playlist (tries playlist endpoint; on failure can fallback)
-  Future<List<Music>> getPlaylistTracks(String playlistId,
+  Future<List<Song>> getPlaylistTracks(String playlistId,
       {int limit = 20, bool fallbackToSearch = true}) async {
     await _ensureAuthenticated();
     if (_accessToken == null) return [];
@@ -170,7 +169,7 @@ class SpotifyService {
   }
 
   /// Optional: get track details by id (useful if you want to call audio features)
-  Future<Music?> getTrackDetails(String trackId) async {
+  Future<Song?> getTrackDetails(String trackId) async {
     await _ensureAuthenticated();
     if (_accessToken == null) return null;
     try {
@@ -206,7 +205,7 @@ class SpotifyService {
   }
 
   /// 🎵 **MAIN FEATURE** → FETCH SONGS BASED ON MOOD
-  Future<List<Music>> getTracksByMood(String mood, {int limit = 20}) async {
+  Future<List<Song>> getTracksByMood(String mood, {int limit = 20}) async {
     final query = _moodToQuery(mood);
     print("🔎 Searching Spotify for mood: $mood → '$query'");
     return await searchTracks(query, limit: limit);

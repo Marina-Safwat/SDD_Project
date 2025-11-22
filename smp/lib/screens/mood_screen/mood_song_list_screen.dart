@@ -1,19 +1,19 @@
 import 'package:flutter/material.dart';
-import 'package:smp/models/music.dart';
+import 'package:smp/models/song.dart';
 import 'package:smp/services/spotify_service.dart';
 
-class MoodSongList extends StatefulWidget {
+class MoodSongListScreen extends StatefulWidget {
+  const MoodSongListScreen({super.key, required this.mood});
+
   final String mood;
 
-  MoodSongList({required this.mood});
-
   @override
-  _MoodSongListState createState() => _MoodSongListState();
+  State<MoodSongListScreen> createState() => _MoodSongListScreenState();
 }
 
-class _MoodSongListState extends State<MoodSongList> {
+class _MoodSongListScreenState extends State<MoodSongListScreen> {
   final SpotifyService _spotifyService = SpotifyService();
-  List<Music> _tracks = [];
+  List<Song> _tracks = [];
   bool _isLoading = false;
 
   @override
@@ -48,18 +48,22 @@ class _MoodSongListState extends State<MoodSongList> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black,
       appBar: AppBar(
         title: Text('${widget.mood} Songs'),
-        backgroundColor: Colors.black87,
       ),
       body: _isLoading
-          ? Center(child: CircularProgressIndicator(color: Colors.white))
+          ? const Center(
+              child: CircularProgressIndicator(
+                color: Colors.white,
+              ),
+            )
           : _tracks.isEmpty
               ? Center(
                   child: Text(
                     'No songs found for mood "${widget.mood}".',
-                    style: TextStyle(color: Colors.white70),
+                    style: const TextStyle(
+                      color: Colors.black87,
+                    ),
                   ),
                 )
               : ListView.builder(
@@ -78,18 +82,26 @@ class _MoodSongListState extends State<MoodSongList> {
                                 fit: BoxFit.cover,
                               ),
                             )
-                          : Icon(Icons.music_note, color: Colors.white),
+                          : const Icon(
+                              Icons.music_note,
+                              color: Colors.black87,
+                            ),
                       title: Text(
                         track.name,
-                        style: TextStyle(color: Colors.white),
+                        style: const TextStyle(color: Colors.black),
                       ),
                       subtitle: Text(
                         '${track.artist}  •  ${track.description}',
-                        style: TextStyle(color: Colors.white70),
+                        style: const TextStyle(
+                          color: Colors.black38,
+                        ),
                       ),
                       trailing: track.audioURL.isNotEmpty
                           ? IconButton(
-                              icon: Icon(Icons.play_arrow, color: Colors.white),
+                              icon: const Icon(
+                                Icons.play_arrow,
+                                color: Colors.black38,
+                              ),
                               onPressed: () {
                                 print('▶ Preview URL: ${track.audioURL}');
                                 // later you connect to your mini-player

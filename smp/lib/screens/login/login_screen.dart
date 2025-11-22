@@ -5,6 +5,7 @@ import 'package:smp/logic/login/pick_screen.dart';
 import 'package:smp/widgets/login/button.dart';
 import 'package:smp/widgets/login/forget_password.dart';
 import 'package:smp/widgets/login/logo_widget.dart';
+import 'package:smp/widgets/login/signup_google.dart';
 import 'package:smp/widgets/login/signup_option.dart';
 import 'package:smp/widgets/login/text_field.dart';
 
@@ -45,8 +46,8 @@ class _LoginScreenState extends State<LoginScreen> {
         decoration: const BoxDecoration(
           gradient: LinearGradient(
             colors: [
-              Color.fromARGB(255, 109, 13, 142),
-              Colors.deepPurple,
+              Color(0xFFF05A89),
+              Color(0xFF7A36C4),
             ],
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
@@ -58,7 +59,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 20, MediaQuery.of(context).size.height * 0.2, 20, 0),
             child: Column(
               children: [
-                const LogoWidget('assets/images/LOGO.png'),
+                const LogoWidget('assets/images/logo1.png'),
                 const SizedBox(
                   height: 30,
                 ),
@@ -92,6 +93,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   title: "LOG IN",
                 ),
                 const SignupOption(),
+                const SignupGoogle(),
               ],
             ),
           ),

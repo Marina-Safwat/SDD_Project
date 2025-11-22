@@ -1,10 +1,8 @@
+import 'package:smp/models/category.dart';
+import 'package:smp/models/song.dart';
+
 class Music {
-  String name;
-  String artist;
-  String image;
-  String description;
-  String audioURL;
-  String mood;
-  Music(this.name, this.artist, this.image, this.description, this.audioURL,
-      this.mood);
+  Category category;
+  List<Song> songs;
+  Music(this.category, this.songs);
 }
