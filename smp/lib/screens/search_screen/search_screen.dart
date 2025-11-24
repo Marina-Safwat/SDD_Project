@@ -79,23 +79,24 @@ class _SearchScreenState extends State<SearchScreen> {
                           style: const TextStyle(color: Colors.black),
                         ),
                         subtitle: Text(
-                          '${song.artist}  •  ${song.description}',
+                          '${song.artists.join(', ')}  •  ${song.album}',
                           style: const TextStyle(
                             color: Colors.black38,
                           ),
                         ),
-                        trailing: song.audioURL.isNotEmpty
-                            ? IconButton(
-                                icon: const Icon(
-                                  Icons.play_arrow,
-                                  color: Colors.black38,
-                                ),
-                                onPressed: () {
-                                  print('▶ Preview URL: ${song.audioURL}');
-                                  // later you connect to your mini-player
-                                },
-                              )
-                            : null,
+                        trailing:
+                            song.audioUrl != null && song.audioUrl!.isNotEmpty
+                                ? IconButton(
+                                    icon: const Icon(
+                                      Icons.play_arrow,
+                                      color: Colors.black38,
+                                    ),
+                                    onPressed: () {
+                                      print('▶ Preview URL: ${song.audioUrl}');
+                                      // later you connect to your mini-player
+                                    },
+                                  )
+                                : null,
                         onTap: () {
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(

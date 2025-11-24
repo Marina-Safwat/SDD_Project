@@ -2,7 +2,9 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:smp/firebase_options.dart';
 import 'package:smp/screens/login/login_screen.dart';
+import 'package:smp/screens/mood_screen/mood_screen.dart';
 import 'package:smp/screens/tabs_screen.dart';
+import 'package:smp/screens/test_spotify.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -13,9 +15,10 @@ void main() async {
     MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        primaryColor: Color(0xFFC34B7C),
+        primaryColor: const Color(0xFFC34B7C),
       ),
-      home: LoginScreen(),
+      // home: const TestApiScreen(),
+      home: const MoodScreen(),
     ),
   );
 }

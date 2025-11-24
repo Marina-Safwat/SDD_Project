@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:smp/models/song.dart';
-import 'package:smp/services/spotify_service.dart';
+import 'package:smp/services/apiService.dart';
 
 class MoodSongListScreen extends StatefulWidget {
   const MoodSongListScreen({super.key, required this.mood});
@@ -12,105 +12,56 @@ class MoodSongListScreen extends StatefulWidget {
 }
 
 class _MoodSongListScreenState extends State<MoodSongListScreen> {
-  final SpotifyService _spotifyService = SpotifyService();
-  List<Song> _tracks = [];
-  bool _isLoading = false;
+  final ApiService apiService = ApiService();
+  List<Song> songs = []; // ← Empty, will be filled from API
+  bool isLoading = true;
+  String? error;
 
   @override
   void initState() {
     super.initState();
-    _loadMoodSongs();
+    _loadSongs(); // ← Load from API
   }
 
-  Future<void> _loadMoodSongs() async {
-    setState(() => _isLoading = true);
+  Future<void> _loadSongs() async {
+    setState(() => isLoading = true);
 
-    try {
-      print('🔐 Authenticating...');
-      await _spotifyService.authenticate();
+    // Get songs from API
+    final response = await ApiService.fetchPlaylist(
+      mood: widget.mood,
+      limit: 20,
+    );
 
-      print('🎵 Loading songs for mood: ${widget.mood} ...');
-      final tracks =
-          await _spotifyService.getTracksByMood(widget.mood, limit: 20);
-
-      setState(() {
-        _tracks = tracks;
-        _isLoading = false;
-      });
-
-      print('✅ Mood "${widget.mood}" loaded ${_tracks.length} tracks');
-    } catch (e) {
-      print('❌ Error loading mood tracks: $e');
-      setState(() => _isLoading = false);
-    }
+    setState(() {
+      isLoading = false;
+      if (response.success && response.data != null) {
+        songs = response.data!; // ← API data here!
+      } else {
+        error = response.error;
+      }
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('${widget.mood} Songs'),
-      ),
-      body: _isLoading
-          ? const Center(
-              child: CircularProgressIndicator(
-                color: Colors.white,
-              ),
-            )
-          : _tracks.isEmpty
-              ? Center(
-                  child: Text(
-                    'No songs found for mood "${widget.mood}".',
-                    style: const TextStyle(
-                      color: Colors.black87,
-                    ),
-                  ),
-                )
-              : ListView.builder(
-                  itemCount: _tracks.length,
-                  itemBuilder: (ctx, index) {
-                    final track = _tracks[index];
+    if (isLoading) {
+      return Center(child: CircularProgressIndicator());
+    }
 
-                    return ListTile(
-                      leading: track.image.isNotEmpty
-                          ? ClipRRect(
-                              borderRadius: BorderRadius.circular(6),
-                              child: Image.network(
-                                track.image,
-                                width: 55,
-                                height: 55,
-                                fit: BoxFit.cover,
-                              ),
-                            )
-                          : const Icon(
-                              Icons.music_note,
-                              color: Colors.black87,
-                            ),
-                      title: Text(
-                        track.name,
-                        style: const TextStyle(color: Colors.black),
-                      ),
-                      subtitle: Text(
-                        '${track.artist}  •  ${track.description}',
-                        style: const TextStyle(
-                          color: Colors.black38,
-                        ),
-                      ),
-                      trailing: track.audioURL.isNotEmpty
-                          ? IconButton(
-                              icon: const Icon(
-                                Icons.play_arrow,
-                                color: Colors.black38,
-                              ),
-                              onPressed: () {
-                                print('▶ Preview URL: ${track.audioURL}');
-                                // later you connect to your mini-player
-                              },
-                            )
-                          : null,
-                    );
-                  },
-                ),
+    if (error != null) {
+      return Center(child: Text('Error: $error'));
+    }
+
+    return ListView.builder(
+      itemCount: songs.length,
+      itemBuilder: (context, index) {
+        final song = songs[index];
+        return ListTile(
+          title: Text(song.name),
+          subtitle: Text(song.artists.join(', ')),
+          leading: Image.network(song.image),
+        );
+      },
     );
   }
 }

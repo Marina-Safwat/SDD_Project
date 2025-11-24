@@ -2,12 +2,12 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:smp/data/data.dart';
 import 'package:smp/screens/profile_screen.dart';
-import 'package:smp/screens/profile_screen_.dart';
 import 'package:smp/widgets/home_screen/category_title.dart';
 import 'package:smp/widgets/home_screen/grid.dart';
 
 class HomeScreen extends StatelessWidget {
-  const HomeScreen({super.key});
+  final String? mood;
+  const HomeScreen({super.key, this.mood});
 
   String capitalize(String value) {
     if (value.isEmpty) return value;
@@ -30,7 +30,7 @@ class HomeScreen extends StatelessWidget {
       greeting = "Good Night";
     }
 
-    return "$greeting, $name";
+    return "${mood != null ? capitalize(mood!) + ' ' : ''}$greeting, $name";
   }
 
   String getUserName() {

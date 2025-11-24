@@ -39,19 +39,19 @@ class CategoryDetailsScreen extends StatelessWidget {
               style: const TextStyle(color: Colors.black),
             ),
             subtitle: Text(
-              '${item.artist}  •  ${item.description}',
+              '${item.artists.join(', ')}  •  ${item.album}',
               style: const TextStyle(
                 color: Colors.black38,
               ),
             ),
-            trailing: item.audioURL.isNotEmpty
+            trailing: item.audioUrl?.isNotEmpty == true
                 ? IconButton(
                     icon: const Icon(
                       Icons.play_arrow,
                       color: Colors.black38,
                     ),
                     onPressed: () {
-                      print('▶ Preview URL: ${item.audioURL}');
+                      print('▶ Preview URL: ${item.audioUrl}');
                       // later you connect to your mini-player
                     },
                   )

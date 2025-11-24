@@ -1,6 +1,6 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:smp/data/data.dart';
+import 'package:smp/screens/home_screen/home_screen.dart';
 import 'package:smp/screens/mood_screen/mood_song_list_screen.dart';
 
 class MoodScreen extends StatelessWidget {
@@ -11,15 +11,15 @@ class MoodScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        title: const Text("Mood"),
+        title: const Text("How are you feeling today?"),
         centerTitle: true,
       ),
       body: GridView.builder(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.symmetric(horizontal: 16),
         itemCount: moodss.length,
         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 2,
-          childAspectRatio: 1,
+          childAspectRatio: 2,
           crossAxisSpacing: 16,
           mainAxisSpacing: 16,
         ),
@@ -35,7 +35,7 @@ class MoodScreen extends StatelessWidget {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (_) => MoodSongListScreen(mood: mood),
+                  builder: (_) => HomeScreen(mood: mood),
                 ),
               );
             },
@@ -56,7 +56,7 @@ class MoodScreen extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Icon(icon, color: Colors.white, size: 46),
-                  const SizedBox(height: 10),
+                  const SizedBox(height: 5),
                   Text(
                     mood,
                     style: const TextStyle(

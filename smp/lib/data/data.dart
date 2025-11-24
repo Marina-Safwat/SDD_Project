@@ -3,47 +3,35 @@ import 'package:smp/models/category.dart';
 import 'package:smp/models/mood.dart';
 import 'package:smp/models/music.dart';
 import 'package:smp/models/song.dart';
-import 'package:smp/models/user_profile.dart';
+import '../models/user_profile.dart';
+import '../services/apiService.dart';
 
-List<Song> songs = [
-  Song(
-      'Feather',
-      'Sabrina Carpenter',
-      'https://m.media-amazon.com/images/I/41E7kviZxcL._SX466_.jpg',
-      'Sabrina',
-      'https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/b6/05/90/b60590c7-94f4-275e-2586-bc1e44d90333/mzaf_15460092183646897234.plus.aac.p.m4a',
-      'happy'),
-  Song(
-      'test',
-      'Sabrina Carpenter',
-      'https://m.media-amazon.com/images/I/41E7kviZxcL._SX466_.jpg',
-      'tester',
-      'https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/b6/05/90/b60590c7-94f4-275e-2586-bc1e44d90333/mzaf_15460092183646897234.plus.aac.p.m4a',
-      'happy'),
-  Song(
-      'Feather',
-      'Sabrina Carpenter',
-      'https://m.media-amazon.com/images/I/41E7kviZxcL._SX466_.jpg',
-      'Sabrina',
-      'https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/b6/05/90/b60590c7-94f4-275e-2586-bc1e44d90333/mzaf_15460092183646897234.plus.aac.p.m4a',
-      'happy'),
+List<Song> songs = [];
+
+final List<Music> categories = [
+  Music(
+      category:
+          Category(name: "Top Songs1", imageURL: "assets/images/LOGO.png"),
+      songs: []),
+  Music(
+      category: Category(name: "Hot Mix", imageURL: "assets/images/LOGO.png"),
+      songs: []),
+  Music(
+      category:
+          Category(name: "Romantic Mix", imageURL: "assets/images/LOGO.png"),
+      songs: []),
 ];
 
-List<Music> categories = [
-  Music(Category("Top Songs1", "assets/images/LOGO.png"), songs),
-  Music(Category("Top Songs2", "assets/images/LOGO.png"), songs),
-  Music(Category("Top Songs3", "assets/images/LOGO.png"), songs),
-  Music(Category("Top Songs4", "assets/images/LOGO.png"), songs),
-  Music(Category("Top Songs5", "assets/images/LOGO.png"), songs),
-  Music(Category("Top Songs6", "assets/images/LOGO.png"), songs),
-];
-
-List<Category> HSSections = [
-  Category('Top Songs', 'https://cdn1.suno.ai/32f56318.webp'),
-  Category('Hot Mix', 'https://cdn1.suno.ai/32f56318.webp'),
-  Category('Romantic Mix', 'https://cdn1.suno.ai/32f56318.webp'),
-  Category('Latest Hits',
-      'https://is3-ssl.mzstatic.com/image/thumb/Purple122/v4/2a/0a/13/2a0a1378-2d71-5373-040c-4c790dfe0ac8/source/256x256bb.jpg'),
+// ignore: non_constant_identifier_names
+final List<Category> HSSections = [
+  Category(name: 'Top Songs', imageURL: 'https://cdn1.suno.ai/32f56318.webp'),
+  Category(name: 'Hot Mix', imageURL: 'https://cdn1.suno.ai/32f56318.webp'),
+  Category(
+      name: 'Romantic Mix', imageURL: 'https://cdn1.suno.ai/32f56318.webp'),
+  Category(
+      name: 'Latest Hits',
+      imageURL:
+          'https://is3-ssl.mzstatic.com/image/thumb/Purple122/v4/2a/0a/13/2a0a1378-2d71-5373-040c-4c790dfe0ac8/source/256x256bb.jpg'),
 ];
 
 final Map<String, Mood> moods = {
@@ -88,7 +76,7 @@ final Map<String, UserProfile> users = {
     email: "marina@gmail.com",
     photoUrl: null, // or add a real URL
     bio: "Music lover 🎵 Developer 💻 Coffee addict ☕",
-    favoriteMood: moodss[0]!, // Happy
+    favoriteMood: moodss[0], // Happy
     playlists: categories,
   )
 };

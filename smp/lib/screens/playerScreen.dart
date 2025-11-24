@@ -10,12 +10,12 @@ class PlayerScreen extends StatefulWidget {
   final VoidCallback onPlayPause;
 
   const PlayerScreen({
-    Key? key,
+    super.key,
     required this.music,
     required this.audioPlayer,
     required this.isPlaying,
     required this.onPlayPause,
-  }) : super(key: key);
+  });
 
   @override
   State<PlayerScreen> createState() => _PlayerScreenState();
@@ -135,10 +135,10 @@ class _PlayerScreenState extends State<PlayerScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xFF121212),
+      backgroundColor: const Color(0xFF121212),
       body: SafeArea(
         child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
           child: Column(
             children: [
               // Header with back button
@@ -147,10 +147,10 @@ class _PlayerScreenState extends State<PlayerScreen> {
                 children: [
                   IconButton(
                     onPressed: () => Navigator.pop(context),
-                    icon: Icon(Icons.keyboard_arrow_down,
+                    icon: const Icon(Icons.keyboard_arrow_down,
                         size: 32, color: Colors.white),
                   ),
-                  Text(
+                  const Text(
                     'Now Playing',
                     style: TextStyle(
                       color: Colors.white,
@@ -160,12 +160,12 @@ class _PlayerScreenState extends State<PlayerScreen> {
                   ),
                   IconButton(
                     onPressed: () {},
-                    icon: Icon(Icons.more_vert, color: Colors.white),
+                    icon: const Icon(Icons.more_vert, color: Colors.white),
                   ),
                 ],
               ),
 
-              SizedBox(height: 40),
+              const SizedBox(height: 40),
 
               // Album Art
               Expanded(
@@ -174,14 +174,14 @@ class _PlayerScreenState extends State<PlayerScreen> {
                     tag: 'music_${widget.music.name}',
                     child: Container(
                       constraints:
-                          BoxConstraints(maxWidth: 350, maxHeight: 350),
+                          const BoxConstraints(maxWidth: 350, maxHeight: 350),
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(16),
                         boxShadow: [
                           BoxShadow(
                             color: Colors.black.withOpacity(0.6),
                             blurRadius: 40,
-                            offset: Offset(0, 20),
+                            offset: const Offset(0, 20),
                           ),
                         ],
                       ),
@@ -192,7 +192,7 @@ class _PlayerScreenState extends State<PlayerScreen> {
                           fit: BoxFit.cover,
                           errorBuilder: (_, __, ___) => Container(
                             color: Colors.grey[800],
-                            child: Icon(Icons.music_note,
+                            child: const Icon(Icons.music_note,
                                 size: 120, color: Colors.white),
                           ),
                         ),
@@ -202,16 +202,16 @@ class _PlayerScreenState extends State<PlayerScreen> {
                 ),
               ),
 
-              SizedBox(height: 40),
+              const SizedBox(height: 40),
 
               // Track Info
               Padding(
-                padding: EdgeInsets.symmetric(horizontal: 8),
+                padding: const EdgeInsets.symmetric(horizontal: 8),
                 child: Column(
                   children: [
                     Text(
                       widget.music.name,
-                      style: TextStyle(
+                      style: const TextStyle(
                         fontSize: 24,
                         fontWeight: FontWeight.bold,
                         color: Colors.white,
@@ -220,9 +220,9 @@ class _PlayerScreenState extends State<PlayerScreen> {
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                     ),
-                    SizedBox(height: 8),
+                    const SizedBox(height: 8),
                     Text(
-                      widget.music.artist ?? 'Unknown Artist',
+                      widget.music.artists.join(', ') ?? 'Unknown Artist',
                       style: TextStyle(
                         fontSize: 16,
                         color: Colors.grey[400],
@@ -235,7 +235,7 @@ class _PlayerScreenState extends State<PlayerScreen> {
                 ),
               ),
 
-              SizedBox(height: 32),
+              const SizedBox(height: 32),
 
               // Progress Bar
               Column(
@@ -243,12 +243,14 @@ class _PlayerScreenState extends State<PlayerScreen> {
                   SliderTheme(
                     data: SliderThemeData(
                       trackHeight: 3,
-                      thumbShape: RoundSliderThumbShape(enabledThumbRadius: 6),
-                      overlayShape: RoundSliderOverlayShape(overlayRadius: 12),
-                      activeTrackColor: Color(0xFF1DB954),
+                      thumbShape:
+                          const RoundSliderThumbShape(enabledThumbRadius: 6),
+                      overlayShape:
+                          const RoundSliderOverlayShape(overlayRadius: 12),
+                      activeTrackColor: const Color(0xFF1DB954),
                       inactiveTrackColor: Colors.grey[800],
                       thumbColor: Colors.white,
-                      overlayColor: Color(0xFF1DB954).withOpacity(0.2),
+                      overlayColor: const Color(0xFF1DB954).withOpacity(0.2),
                     ),
                     child: Slider(
                       value: currentPosition.inSeconds.toDouble(),
@@ -262,7 +264,7 @@ class _PlayerScreenState extends State<PlayerScreen> {
                     ),
                   ),
                   Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 16),
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -282,7 +284,7 @@ class _PlayerScreenState extends State<PlayerScreen> {
                 ],
               ),
 
-              SizedBox(height: 24),
+              const SizedBox(height: 24),
 
               // Like, Dislike, Favorite Controls
               Row(
@@ -325,12 +327,12 @@ class _PlayerScreenState extends State<PlayerScreen> {
                       isLiked ? Icons.thumb_up : Icons.thumb_up_outlined,
                       size: 28,
                     ),
-                    color: isLiked ? Color(0xFF1DB954) : Colors.grey[600],
+                    color: isLiked ? const Color(0xFF1DB954) : Colors.grey[600],
                   ),
                 ],
               ),
 
-              SizedBox(height: 24),
+              const SizedBox(height: 24),
 
               // Playback Controls
               Row(
@@ -343,8 +345,10 @@ class _PlayerScreenState extends State<PlayerScreen> {
                         isShuffleOn = !isShuffleOn;
                       });
                     },
-                    icon: Icon(Icons.shuffle),
-                    color: isShuffleOn ? Color(0xFF1DB954) : Colors.grey[600],
+                    icon: const Icon(Icons.shuffle),
+                    color: isShuffleOn
+                        ? const Color(0xFF1DB954)
+                        : Colors.grey[600],
                     iconSize: 24,
                   ),
 
@@ -353,14 +357,14 @@ class _PlayerScreenState extends State<PlayerScreen> {
                     onPressed: () {
                       Navigator.pop(context, 'previous');
                     },
-                    icon: Icon(Icons.skip_previous),
+                    icon: const Icon(Icons.skip_previous),
                     color: Colors.white,
                     iconSize: 36,
                   ),
 
                   // Play/Pause
                   Container(
-                    decoration: BoxDecoration(
+                    decoration: const BoxDecoration(
                       shape: BoxShape.circle,
                       color: Colors.white,
                     ),
@@ -379,7 +383,7 @@ class _PlayerScreenState extends State<PlayerScreen> {
                     onPressed: () {
                       Navigator.pop(context, 'next');
                     },
-                    icon: Icon(Icons.skip_next),
+                    icon: const Icon(Icons.skip_next),
                     color: Colors.white,
                     iconSize: 36,
                   ),
@@ -391,14 +395,15 @@ class _PlayerScreenState extends State<PlayerScreen> {
                         isRepeatOn = !isRepeatOn;
                       });
                     },
-                    icon: Icon(Icons.repeat),
-                    color: isRepeatOn ? Color(0xFF1DB954) : Colors.grey[600],
+                    icon: const Icon(Icons.repeat),
+                    color:
+                        isRepeatOn ? const Color(0xFF1DB954) : Colors.grey[600],
                     iconSize: 24,
                   ),
                 ],
               ),
 
-              SizedBox(height: 16),
+              const SizedBox(height: 16),
             ],
           ),
         ),

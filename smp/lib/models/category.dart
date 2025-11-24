@@ -4,5 +4,5 @@ class Category {
   String imageURL;
 
   // Positional parameters (no 'required')
-  Category(this.name, this.imageURL);
+  Category({required this.imageURL, required this.name});
 }

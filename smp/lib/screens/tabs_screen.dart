@@ -15,21 +15,23 @@ class TabsScreen extends StatefulWidget {
 }
 
 class _TabsScreenState extends State<TabsScreen> {
-  AudioPlayer _audioPlayer = new AudioPlayer();
+  final AudioPlayer _audioPlayer = AudioPlayer();
   var Tabs = [];
   int currentTabIndex = 2;
   bool isPlaying = false;
   Song? music;
+
+  String? get selectedMood => null;
   Widget miniPlayer(Song? music, {bool stop = false}) {
     this.music = music;
     setState(() {});
     if (music == null) {
-      return SizedBox();
+      return const SizedBox();
     }
     if (stop) {
       isPlaying = false;
       _audioPlayer.stop();
-      return SizedBox();
+      return const SizedBox();
     }
     setState(() {});
     Size deviceSize = MediaQuery.of(context).size;
@@ -54,18 +56,18 @@ class _TabsScreenState extends State<TabsScreen> {
                   onPressed: () async {
                     isPlaying = !isPlaying;
                     if (isPlaying) {
-                      await _audioPlayer.play(UrlSource(music.audioURL));
+                      await _audioPlayer.play(UrlSource(music.audioUrl ?? ''));
                     } else {
                       await _audioPlayer.pause();
                     }
                     setState(() {});
                   },
                   icon: isPlaying
-                      ? Icon(
+                      ? const Icon(
                           Icons.pause,
                           color: Colors.white,
                         )
-                      : Icon(
+                      : const Icon(
                           Icons.play_arrow,
                           color: Colors.white,
                         ))
@@ -89,7 +91,7 @@ class _TabsScreenState extends State<TabsScreen> {
           onPlayPause: () async {
             isPlaying = !isPlaying;
             if (isPlaying) {
-              await _audioPlayer.play(UrlSource(music!.audioURL));
+              await _audioPlayer.play(UrlSource(music!.audioUrl ?? ''));
             } else {
               await _audioPlayer.pause();
             }
@@ -109,13 +111,21 @@ class _TabsScreenState extends State<TabsScreen> {
     });
   }
 
+  void _handleMoodSelected(String mood) {
+    setState(() {
+      var selectedMood = mood;
+      Tabs[0] = HomeScreen(mood: selectedMood);
+      currentTabIndex = 0; // Switch to Home tab when a mood is selected
+    });
+  }
+
   @override
-  initState() {
+  void initState() {
     super.initState();
     Tabs = [
-      HomeScreen(), //miniPlayer),
-      SearchScreen(),
-      MoodScreen(),
+      HomeScreen(mood: selectedMood), //miniPlayer),
+      const SearchScreen(),
+      MoodScreen(onMoodSelected: _handleMoodSelected),
       const ProfileScreen(),
     ];
   }

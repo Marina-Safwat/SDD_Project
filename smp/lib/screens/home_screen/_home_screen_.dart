@@ -3,7 +3,8 @@ import 'package:smp/data/data.dart';
 import 'package:smp/models/song.dart';
 import 'package:smp/screens/profile_screen_.dart';
 import 'package:smp/models/category.dart';
-import 'package:smp/services/spotify_service.dart';
+import 'package:smp/services/apiService.dart';
+// import 'package:smp/services/spotify_service.dart';
 import 'package:smp/widgets/home_screen/grid.dart';
 
 class HomeScreen_ extends StatefulWidget {
@@ -18,26 +19,51 @@ class HomeScreen_ extends StatefulWidget {
 class _HomeScreen_State extends State<HomeScreen_> {
   List<Song> spotifyTracks = [];
   bool isLoading = true;
-
-  final SpotifyService _spotifyService = SpotifyService();
+  String? errorMessage;
+  // final SpotifyService _spotifyService = SpotifyService();
 
   @override
   void initState() {
     super.initState();
-    _loadSpotifyMusic();
+    _loadMusic();
   }
 
-  void _loadSpotifyMusic() async {
-    List<Song> tracks = await _spotifyService.getTop50Global();
+  Future<void> _loadMusic() async {
     setState(() {
-      spotifyTracks = tracks;
-      isLoading = false;
+      isLoading = true;
+      errorMessage = null;
     });
+
+    try {
+      // Option 1: Get popular/party songs for home screen
+      final response = await ApiService.fetchPlaylist(
+        mood: 'party', // Use 'party' for energetic home screen songs
+        limit: 10,
+      );
+
+      if (mounted) {
+        setState(() {
+          isLoading = false;
+          if (response.success && response.data != null) {
+            spotifyTracks = response.data!;
+          } else {
+            errorMessage = response.error ?? 'Failed to load songs';
+          }
+        });
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          isLoading = false;
+          errorMessage = 'Error loading songs: $e';
+        });
+      }
+    }
   }
 
   Widget createCategory(Category category) {
     return Container(
-      color: Color.fromARGB(255, 243, 196, 215),
+      color: const Color.fromARGB(255, 243, 196, 215),
       child: Row(
         children: [
           Image.network(
@@ -48,7 +74,7 @@ class _HomeScreen_State extends State<HomeScreen_> {
             padding: const EdgeInsets.only(left: 10.0),
             child: Text(
               category.name, // Fixed: removed .style
-              style: TextStyle(
+              style: const TextStyle(
                   color: Colors.white), // Fixed: added style parameter
             ),
           )

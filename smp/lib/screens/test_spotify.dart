@@ -1,79 +1,127 @@
-// import 'package:flutter/material.dart';
-// import 'package:smp/models/music.dart';
-// import 'package:smp/services/spotify_service.dart';
+import 'dart:html' as html;
+import 'package:flutter/material.dart';
+import 'package:smp/services/apiService.dart';
 
-// class TestSpotify extends StatefulWidget {
-//   @override
-//   _TestSpotifyState createState() => _TestSpotifyState();
-// }
+void testFetch() {
+  // Only works on Flutter Web
+// put at the top of your file
 
-// class _TestSpotifyState extends State<TestSpotify> {
-//   final SpotifyService _spotifyService = SpotifyService();
-//   List<Music> _tracks = [];
-//   bool _isLoading = false;
+  html.window
+      .fetch(
+          'https://smp-app-afy4g.ondigitalocean.app/playlist/c347a711-9dd0-484a-9902-45d5d45da6a6/Happy/5')
+      .then((resp) => print(resp))
+      .catchError((err) => print('❌ Error: $err'));
+}
 
-//   @override
-//   void initState() {
-//     super.initState();
-//     _loadTop50Global();
-//   }
+class TestApiScreen extends StatefulWidget {
+  const TestApiScreen({super.key});
 
-//   Future<void> _loadTop50Global() async {
-//     setState(() => _isLoading = true);
+  @override
+  State<TestApiScreen> createState() => _TestApiScreenState();
+}
 
-//     try {
-//       print('🔐 Authenticating...');
-//       await _spotifyService.authenticate();
+class _TestApiScreenState extends State<TestApiScreen> {
+  String status = 'Not tested';
+  bool isLoading = false;
 
-//       print('🎵 Loading Top 50 Global...');
-//       final tracks = await _spotifyService.getTop50Global(limit: 20);
+  Future<void> testApi() async {
+    setState(() {
+      isLoading = true;
+      status = 'Testing...';
+    });
 
-//       setState(() {
-//         _tracks = tracks;
-//         _isLoading = false;
-//       });
+    try {
+      // Test connection
+      final isConnected = await ApiService.testConnection();
 
-//       print('✅ Total tracks loaded: ${_tracks.length}');
-//     } catch (e) {
-//       print('❌ Error loading tracks: $e');
-//       setState(() => _isLoading = false);
-//     }
-//   }
+      if (!isConnected) {
+        setState(() {
+          status = '❌ Connection failed';
+          isLoading = false;
+        });
+        return;
+      }
 
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       appBar: AppBar(
-//         title: Text('Spotify Top 50 Test'),
-//         backgroundColor: Colors.green,
-//       ),
-//       body: _isLoading
-//           ? Center(child: CircularProgressIndicator())
-//           : _tracks.isEmpty
-//               ? Center(child: Text('No tracks found.'))
-//               : ListView.builder(
-//                   itemCount: _tracks.length,
-//                   itemBuilder: (ctx, index) {
-//                     final track = _tracks[index];
-//                     return ListTile(
-//                       leading: track.image.isNotEmpty
-//                           ? Image.network(track.image, width: 50, height: 50)
-//                           : SizedBox(width: 50, height: 50),
-//                       title: Text(track.name),
-//                       subtitle: Text(
-//                           '${track.artist} | Album: ${track.description} | Mood: ${track.mood}'),
-//                       trailing: track.audioURL.isNotEmpty
-//                           ? IconButton(
-//                               icon: Icon(Icons.play_arrow),
-//                               onPressed: () {
-//                                 // TODO: play preview from track.audioURL
-//                                 print('Preview URL: ${track.audioURL}');
-//                               },
-//                             )
-//                           : null,
-//                     );
-//                   },
-//                 ),
-//     );
-//   }
-// }
+      // Fetch songs dynamically
+      final songs = await ApiService.fetchPlaylist(mood: 'happy', limit: 5);
+
+      if (songs.data == null || songs.data!.isEmpty) {
+        setState(() {
+          status = '⚠️ API reachable but returned no songs';
+          isLoading = false;
+        });
+        return;
+      }
+
+      // Build output string
+      final buffer = StringBuffer(
+          '✅ SUCCESS!\n\nFetched ${songs.data!.length} songs:\n\n');
+      for (var song in songs.data!) {
+        buffer.writeln('• ${song.name}');
+        buffer.writeln('  by ${song.artists.join(', ')}');
+        buffer.writeln('  Audio URL: ${song.audioUrl ?? "N/A"}\n');
+      }
+
+      setState(() {
+        status = buffer.toString();
+        isLoading = false;
+      });
+    } catch (e) {
+      setState(() {
+        status = '❌ ERROR:\n\n$e';
+        isLoading = false;
+      });
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    // Call testFetch() only for debug purposes in Web
+    testFetch();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('API Connection Test'),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            ElevatedButton(
+              onPressed: isLoading ? null : testApi,
+              style:
+                  ElevatedButton.styleFrom(padding: const EdgeInsets.all(16)),
+              child: isLoading
+                  ? const CircularProgressIndicator(color: Colors.white)
+                  : const Text('Test API Connection',
+                      style: TextStyle(fontSize: 18)),
+            ),
+            const SizedBox(height: 20),
+            Expanded(
+              child: Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: Colors.grey[100],
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(color: Colors.grey[300]!),
+                ),
+                child: SingleChildScrollView(
+                  child: Text(
+                    status,
+                    style:
+                        const TextStyle(fontFamily: 'monospace', fontSize: 14),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}

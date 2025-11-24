@@ -262,16 +262,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     child: ListTile(
                       title: const Text('Your mood'),
                       subtitle: Text(
-                        mood != null ? mood.name : 'Choose your mood',
+                        mood.name,
                       ),
-                      leading: mood != null
-                          ? CircleAvatar(
-                              backgroundColor: mood.color.withOpacity(0.2),
-                              child: Icon(mood.icon, color: mood.color),
-                            )
-                          : const CircleAvatar(
-                              child: Icon(Icons.mood),
-                            ),
+                      leading: CircleAvatar(
+                        backgroundColor: mood.color.withOpacity(0.2),
+                        child: Icon(mood.icon, color: mood.color),
+                      ),
                       onTap: _pickFavoriteMood,
                     ),
                   ),
