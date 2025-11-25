@@ -5,7 +5,8 @@ import 'package:smp/screens/mood_screen/mood_song_list_screen.dart';
 import 'package:smp/screens/tabs_screen.dart';
 
 class MoodScreen extends StatelessWidget {
-  const MoodScreen({super.key});
+  const MoodScreen(
+      {super.key, required void Function(String mood) onMoodSelected});
 
   @override
   Widget build(BuildContext context) {
