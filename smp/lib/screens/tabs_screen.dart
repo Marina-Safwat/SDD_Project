@@ -126,7 +126,7 @@ class _TabsScreenState extends State<TabsScreen> {
     Tabs = [
       HomeScreen(mood: selectedMood), //miniPlayer),
       const SearchScreen(),
-      const MoodScreen(),
+      MoodScreen(onMoodSelected: _handleMoodSelected),
       const ProfileScreen(),
     ];
   }

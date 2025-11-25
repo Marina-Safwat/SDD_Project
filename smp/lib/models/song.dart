@@ -1,5 +1,5 @@
 class Song {
-  final int id;
+  final String id;
   final String name;
   final List<String> artists;
   final String album;
@@ -19,7 +19,7 @@ class Song {
 
   factory Song.fromJson(Map<String, dynamic> json) {
     return Song(
-      id: json['id'] ?? 0,
+      id: json['id']?.toString() ?? '',
       name: json['name'] ?? '',
       artists: List<String>.from(json['artists'] ?? []),
       album: json['album'] ?? '',

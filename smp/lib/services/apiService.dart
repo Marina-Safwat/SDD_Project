@@ -30,6 +30,47 @@ class ApiResponse<T> {
         data = null;
 }
 
+/// Response model for search songs
+class SearchSongResponse {
+  final bool success;
+  final List<Song> songs;
+
+  SearchSongResponse({required this.success, required this.songs});
+
+  factory SearchSongResponse.fromJson(Map<String, dynamic> json) {
+    final results = json['result'] as List? ?? [];
+    final songs = results.map((e) => Song.fromJson(e)).toList();
+    return SearchSongResponse(
+      success: json['success'] == true,
+      songs: songs,
+    );
+  }
+}
+
+/// ============================================================
+
+/// Response model for history songs
+/// Used in user history fetching if needed
+///
+class HistorySongResponse {
+  final bool success;
+  final List<Song> songs;
+
+  HistorySongResponse({required this.success, required this.songs});
+
+  factory HistorySongResponse.fromJson(Map<String, dynamic> json) {
+    final results = json['result'] as List<dynamic>? ?? [];
+    final songs = results.map((item) => Song.fromJson(item)).toList();
+    return HistorySongResponse(
+      success: json['success'] == true,
+      songs: songs,
+    );
+  }
+}
+
+// ============================================================
+// API SERVICE
+
 /// Main API Service for Digital Ocean Backend
 class ApiService {
   // ============================================================
@@ -80,13 +121,13 @@ class ApiService {
         );
       }
     } on http.ClientException catch (e) {
-      _log('❌ Network Error: $e');
+      _log(' Network Error: $e');
       throw ApiException('Network error occurred', error: e);
     } on FormatException catch (e) {
-      _log('❌ JSON Parse Error: $e');
+      _log(' JSON Parse Error: $e');
       throw ApiException('Invalid response format', error: e);
     } catch (e) {
-      _log('❌ Unexpected Error: $e');
+      _log(' Unexpected Error: $e');
       throw ApiException('An unexpected error occurred', error: e);
     }
   }
@@ -101,9 +142,9 @@ class ApiService {
       _log('🔌 Testing API connection...');
       final response = await fetchPlaylist(mood: 'happy', limit: 1);
       _log('✅ API connection successful');
-      return response.success && (response.data?.isNotEmpty ?? false);
+      return response.success; // FIXED
     } catch (e) {
-      _log('❌ API connection failed: $e');
+      _log(' API connection failed: $e');
       return false;
     }
   }
@@ -336,7 +377,7 @@ class ApiService {
     final audioUrl = track['preview_url']?.toString() ?? '';
 
     return Song(
-      id: int.tryParse(track['id']?.toString() ?? '') ?? 0,
+      id: track['id']?.toString() ?? '',
       name: track['name']?.toString() ?? '',
       artists: artists,
       album: albumName,
@@ -345,7 +386,46 @@ class ApiService {
       mood: '',
     );
   }
+
+  /// Search songs by query and mood
+  static Future<SearchSongResponse> searchSongs({
+    required String query,
+    required String mood,
+    int limit = 10,
+  }) async {
+    try {
+      final endpoint = '/search/$apiKey/$query/$limit/$mood';
+
+      final data = await _getRequest(endpoint);
+
+      return SearchSongResponse.fromJson(data);
+    } on ApiException catch (e) {
+      _log(' Search API error: ${e.message}');
+      return SearchSongResponse(success: false, songs: []);
+    } catch (e) {
+      _log(' Unexpected Search API error: $e');
+      return SearchSongResponse(success: false, songs: []);
+    }
+  }
+
+  static Future<HistorySongResponse> fetchHistory({
+    required String userId,
+  }) async {
+    try {
+      final endpoint = '/history/$apiKey/$userId';
+      final data = await _getRequest(endpoint);
+      return HistorySongResponse.fromJson(data);
+    } on ApiException catch (e) {
+      _log(' History API error: ${e.message}');
+      return HistorySongResponse(success: false, songs: []);
+    } catch (e) {
+      _log(' Unexpected History API error: $e');
+      return HistorySongResponse(success: false, songs: []);
+    }
+  }
 }
+//-----------------------------------------------------------
+//
 
 // ============================================================
 // USAGE EXAMPLES
@@ -400,4 +480,5 @@ class ApiServiceExamples {
       print('Next song: ${response.data!.name}');
     }
   }
+  //Exmple of usage of search songs
 }
