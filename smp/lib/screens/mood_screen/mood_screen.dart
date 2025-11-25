@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:smp/data/data.dart';
 import 'package:smp/screens/home_screen/home_screen.dart';
 import 'package:smp/screens/mood_screen/mood_song_list_screen.dart';
+import 'package:smp/screens/tabs_screen.dart';
 
 class MoodScreen extends StatelessWidget {
   const MoodScreen({super.key});
@@ -35,7 +36,8 @@ class MoodScreen extends StatelessWidget {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (_) => HomeScreen(mood: mood),
+                  builder: (_) => TabsScreen(mood: mood),
+                  //HomeScreen(mood: mood),
                 ),
               );
             },

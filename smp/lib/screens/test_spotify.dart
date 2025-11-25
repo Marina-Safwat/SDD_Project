@@ -1,16 +1,9 @@
-import 'dart:html' as html;
 import 'package:flutter/material.dart';
 import 'package:smp/services/apiService.dart';
 
 void testFetch() {
   // Only works on Flutter Web
 // put at the top of your file
-
-  html.window
-      .fetch(
-          'https://smp-app-afy4g.ondigitalocean.app/playlist/c347a711-9dd0-484a-9902-45d5d45da6a6/Happy/5')
-      .then((resp) => print(resp))
-      .catchError((err) => print('❌ Error: $err'));
 }
 
 class TestApiScreen extends StatefulWidget {

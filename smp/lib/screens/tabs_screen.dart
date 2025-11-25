@@ -8,7 +8,8 @@ import 'package:smp/screens/playerScreen.dart';
 import 'package:smp/screens/search_screen/search_screen.dart';
 
 class TabsScreen extends StatefulWidget {
-  const TabsScreen({super.key});
+  final String? mood;
+  const TabsScreen({super.key, this.mood});
 
   @override
   State<TabsScreen> createState() => _TabsScreenState();
@@ -125,7 +126,7 @@ class _TabsScreenState extends State<TabsScreen> {
     Tabs = [
       HomeScreen(mood: selectedMood), //miniPlayer),
       const SearchScreen(),
-      MoodScreen(onMoodSelected: _handleMoodSelected),
+      const MoodScreen(),
       const ProfileScreen(),
     ];
   }
