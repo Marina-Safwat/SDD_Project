@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:smp/models/music.dart';
+import 'package:smp/screens/player_screen/playerScreen.dart';
 
 class CategoryDetailsScreen extends StatelessWidget {
   final Music music;
@@ -39,26 +40,30 @@ class CategoryDetailsScreen extends StatelessWidget {
               style: const TextStyle(color: Colors.black),
             ),
             subtitle: Text(
-              '${item.artist}  •  ${item.description}',
+              '${item.artists}', //  •  ${item.description}',
               style: const TextStyle(
                 color: Colors.black38,
               ),
             ),
-            trailing: item.audioURL.isNotEmpty
+            trailing: item.audioUrl != null
                 ? IconButton(
                     icon: const Icon(
                       Icons.play_arrow,
                       color: Colors.black38,
                     ),
                     onPressed: () {
-                      print('▶ Preview URL: ${item.audioURL}');
+                      print('▶ Preview URL: ${item.audioUrl}');
                       // later you connect to your mini-player
                     },
                   )
                 : null,
             onTap: () {
-              // Optional: handle tap on each card
-              // e.g., navigate to another detail screen
+              // Navigator.push(
+              //   context,
+              //   MaterialPageRoute(
+              //     builder: (context) => PlayerScreen(isPlaying: true,music: item,audioPlayer: item.audioURL,),
+              //   ),
+              //);
             },
           );
         },

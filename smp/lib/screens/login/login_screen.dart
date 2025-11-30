@@ -8,6 +8,8 @@ import 'package:smp/widgets/login/logo_widget.dart';
 import 'package:smp/widgets/login/signup_google.dart';
 import 'package:smp/widgets/login/signup_option.dart';
 import 'package:smp/widgets/login/text_field.dart';
+import 'package:smp/data/data.dart';
+import 'package:smp/models/user_profile.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -28,6 +30,8 @@ class _LoginScreenState extends State<LoginScreen> {
         email: _emailTextController.text,
         password: _passwordTextController.text,
       );
+      users[_emailTextController.text] =
+          UserProfile.fromFirebaseUser(FirebaseAuth.instance.currentUser!);
       Navigator.push(
           context, MaterialPageRoute(builder: (context) => const PickScreen()));
     } on FirebaseAuthException catch (e) {

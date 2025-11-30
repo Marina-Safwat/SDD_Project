@@ -7,26 +7,32 @@ import 'package:smp/models/user_profile.dart';
 
 List<Song> songs = [
   Song(
-      'Feather',
-      'Sabrina Carpenter',
-      'https://m.media-amazon.com/images/I/41E7kviZxcL._SX466_.jpg',
-      'Sabrina',
-      'https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/b6/05/90/b60590c7-94f4-275e-2586-bc1e44d90333/mzaf_15460092183646897234.plus.aac.p.m4a',
-      'happy'),
+      id: "145Feather",
+      name: 'Feather',
+      artists: ['Sabrina Carpenter'],
+      image: 'https://m.media-amazon.com/images/I/41E7kviZxcL._SX466_.jpg',
+      album: 'Sabrina',
+      audioUrl:
+          'https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/b6/05/90/b60590c7-94f4-275e-2586-bc1e44d90333/mzaf_15460092183646897234.plus.aac.p.m4a',
+      mood: 'happy'),
   Song(
-      'test',
-      'Sabrina Carpenter',
-      'https://m.media-amazon.com/images/I/41E7kviZxcL._SX466_.jpg',
-      'tester',
-      'https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/b6/05/90/b60590c7-94f4-275e-2586-bc1e44d90333/mzaf_15460092183646897234.plus.aac.p.m4a',
-      'happy'),
+      id: "145test",
+      name: 'test',
+      artists: ['Sabrina Carpenter'],
+      image: 'https://m.media-amazon.com/images/I/41E7kviZxcL._SX466_.jpg',
+      album: 'tester',
+      audioUrl:
+          'https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/b6/05/90/b60590c7-94f4-275e-2586-bc1e44d90333/mzaf_15460092183646897234.plus.aac.p.m4a',
+      mood: 'happy'),
   Song(
-      'Feather',
-      'Sabrina Carpenter',
-      'https://m.media-amazon.com/images/I/41E7kviZxcL._SX466_.jpg',
-      'Sabrina',
-      'https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/b6/05/90/b60590c7-94f4-275e-2586-bc1e44d90333/mzaf_15460092183646897234.plus.aac.p.m4a',
-      'happy'),
+      id: "167Feather",
+      name: 'Feather',
+      artists: ['Sabrina Carpenter'],
+      image: 'https://m.media-amazon.com/images/I/41E7kviZxcL._SX466_.jpg',
+      album: 'Sabrina',
+      audioUrl:
+          'https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/b6/05/90/b60590c7-94f4-275e-2586-bc1e44d90333/mzaf_15460092183646897234.plus.aac.p.m4a',
+      mood: 'happy'),
 ];
 
 List<Music> categories = [
@@ -92,3 +98,25 @@ final Map<String, UserProfile> users = {
     playlists: categories,
   )
 };
+
+final testSong = Song(
+  id: "test1",
+  name: "Test Track",
+  artists: ["Test Artist"],
+  album: "Test Album",
+  image:
+      "https://i.scdn.co/image/ab67616d0000b273e7cba28f132cd431cc87fe57", // Spotify placeholder
+  audioUrl: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
+  mood: "happy",
+);
+
+final testSong1 = Song(
+  id: "99",
+  name: "Every Morning",
+  artists: ["Anton Vlasov"],
+  album: "Pixabay Album",
+  image: "https://i.scdn.co/image/ab67616d0000b273e7cba28f132cd431cc87fe57",
+  audioUrl:
+      "https://cdn.pixabay.com/download/audio/2022/03/15/audio_93c9573c64.mp3?filename=every-morning-133686.mp3",
+  mood: "happy",
+);
