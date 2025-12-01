@@ -10,8 +10,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:smp/data/data.dart';
 
 import 'package:smp/main.dart';
-import 'package:smp/screens/player_screen/player_screen.dart';
-import 'package:smp/screens/tabs_screen.dart';
+import 'package:smp/_archive/player_screen/player_screen.dart';
+import 'package:smp/features/tabs_screen.dart';
 
 void main() {
   testWidgets('Counter increments smoke test', (WidgetTester tester) async {
