@@ -1,4 +1,4 @@
-# Smart Music Player(SMP) - Team Group 5
+# Smart Playlist Manager(SPM) - Team Group 5
 
 ## Team Members
 
