@@ -7,14 +7,18 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:smp/data/data.dart';
 
 import 'package:smp/main.dart';
+import 'package:smp/screens/player_screen/player_screen.dart';
 import 'package:smp/screens/tabs_screen.dart';
 
 void main() {
   testWidgets('Counter increments smoke test', (WidgetTester tester) async {
     // Build our app and trigger a frame.
-    await tester.pumpWidget(const TabsScreen());
+    await tester.pumpWidget(PlayerScreen__(
+      song: testSong,
+    ));
 
     // Verify that our counter starts at 0.
     expect(find.text('0'), findsOneWidget);

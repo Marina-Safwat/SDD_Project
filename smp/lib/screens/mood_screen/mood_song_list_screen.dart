@@ -91,19 +91,19 @@ class _MoodSongListScreenState extends State<MoodSongListScreen> {
                         style: const TextStyle(color: Colors.black),
                       ),
                       subtitle: Text(
-                        '${track.artist}  •  ${track.description}',
+                        '${track.artists}',//  •  ${track.description}',
                         style: const TextStyle(
                           color: Colors.black38,
                         ),
                       ),
-                      trailing: track.audioURL.isNotEmpty
+                      trailing: track.audioUrl != null
                           ? IconButton(
                               icon: const Icon(
                                 Icons.play_arrow,
                                 color: Colors.black38,
                               ),
                               onPressed: () {
-                                print('▶ Preview URL: ${track.audioURL}');
+                                print('▶ Preview URL: ${track.audioUrl}');
                                 // later you connect to your mini-player
                               },
                             )

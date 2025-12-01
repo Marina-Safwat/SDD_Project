@@ -4,14 +4,14 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:smp/models/song.dart';
 
 class PlayerScreen extends StatefulWidget {
-  final Song music;
+  final Song song;
   final AudioPlayer audioPlayer;
   final bool isPlaying;
   final VoidCallback onPlayPause;
 
   const PlayerScreen({
     Key? key,
-    required this.music,
+    required this.song,
     required this.audioPlayer,
     required this.isPlaying,
     required this.onPlayPause,
@@ -58,9 +58,9 @@ class _PlayerScreenState extends State<PlayerScreen> {
       final favoriteSongs = prefs.getStringList('favorite_songs') ?? [];
       final dislikedSongs = prefs.getStringList('disliked_songs') ?? [];
 
-      isLiked = likedSongs.contains(widget.music.name);
-      isFavorite = favoriteSongs.contains(widget.music.name);
-      isDisliked = dislikedSongs.contains(widget.music.name);
+      isLiked = likedSongs.contains(widget.song.name);
+      isFavorite = favoriteSongs.contains(widget.song.name);
+      isDisliked = dislikedSongs.contains(widget.song.name);
     });
   }
 
@@ -70,10 +70,10 @@ class _PlayerScreenState extends State<PlayerScreen> {
 
     setState(() {
       if (isLiked) {
-        likedSongs.remove(widget.music.name);
+        likedSongs.remove(widget.song.name);
         isLiked = false;
       } else {
-        likedSongs.add(widget.music.name);
+        likedSongs.add(widget.song.name);
         isLiked = true;
         // Remove from disliked if it was disliked
         if (isDisliked) {
@@ -91,10 +91,10 @@ class _PlayerScreenState extends State<PlayerScreen> {
 
     setState(() {
       if (isFavorite) {
-        favoriteSongs.remove(widget.music.name);
+        favoriteSongs.remove(widget.song.name);
         isFavorite = false;
       } else {
-        favoriteSongs.add(widget.music.name);
+        favoriteSongs.add(widget.song.name);
         isFavorite = true;
       }
     });
@@ -108,10 +108,10 @@ class _PlayerScreenState extends State<PlayerScreen> {
 
     setState(() {
       if (isDisliked) {
-        dislikedSongs.remove(widget.music.name);
+        dislikedSongs.remove(widget.song.name);
         isDisliked = false;
       } else {
-        dislikedSongs.add(widget.music.name);
+        dislikedSongs.add(widget.song.name);
         isDisliked = true;
         // Remove from liked if it was liked
         if (isLiked) {
@@ -171,7 +171,7 @@ class _PlayerScreenState extends State<PlayerScreen> {
               Expanded(
                 child: Center(
                   child: Hero(
-                    tag: 'music_${widget.music.name}',
+                    tag: 'song_${widget.song.name}',
                     child: Container(
                       constraints:
                           BoxConstraints(maxWidth: 350, maxHeight: 350),
@@ -188,11 +188,11 @@ class _PlayerScreenState extends State<PlayerScreen> {
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(16),
                         child: Image.network(
-                          widget.music.image,
+                          widget.song.image,
                           fit: BoxFit.cover,
                           errorBuilder: (_, __, ___) => Container(
                             color: Colors.grey[800],
-                            child: Icon(Icons.music_note,
+                            child: const Icon(Icons.music_note,
                                 size: 120, color: Colors.white),
                           ),
                         ),
@@ -210,7 +210,7 @@ class _PlayerScreenState extends State<PlayerScreen> {
                 child: Column(
                   children: [
                     Text(
-                      widget.music.name,
+                      widget.song.name,
                       style: TextStyle(
                         fontSize: 24,
                         fontWeight: FontWeight.bold,
@@ -222,7 +222,7 @@ class _PlayerScreenState extends State<PlayerScreen> {
                     ),
                     SizedBox(height: 8),
                     Text(
-                      widget.music.artist ?? 'Unknown Artist',
+                      widget.song.artists[0] ?? 'Unknown Artist',
                       style: TextStyle(
                         fontSize: 16,
                         color: Colors.grey[400],

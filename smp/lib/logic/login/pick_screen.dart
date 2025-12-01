@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:smp/logic/login/auth_service.dart';
+import 'package:smp/screens/mood_screen/mood_screen.dart';
 import 'package:smp/screens/tabs_screen.dart';
 import 'package:smp/screens/login/loading_screen.dart';
 import 'package:smp/screens/login/login_screen.dart';
@@ -25,7 +26,7 @@ class PickScreen extends StatelessWidget {
             if (snapshot.connectionState == ConnectionState.waiting) {
               widget = const LoadingScreen();
             } else if (snapshot.hasData) {
-              widget = const TabsScreen();
+              widget = const MoodScreen();
             } else {
               widget = /* pageIfNotConnected ??*/ const LoginScreen();
             }

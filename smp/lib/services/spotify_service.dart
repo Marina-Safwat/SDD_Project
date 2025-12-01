@@ -68,12 +68,13 @@ class SpotifyService {
     final mood = _detectMood(track);
 
     return Song(
-      track['name'] ?? '',
-      artists,
-      imageUrl,
-      albumName,
-      audioUrl,
-      mood,
+      id: "123" + track['name'] ?? '',
+      name: track['name'] ?? '',
+      artists: [artists],
+      image: imageUrl,
+      album: albumName,
+      audioUrl: audioUrl,
+      mood: mood,
     );
   }
 

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:smp/data/data.dart';
 import 'package:smp/models/song.dart';
-import 'package:smp/screens/profile_screen_.dart';
+import 'package:smp/screens/profile_screen/profile_screen_.dart';
 import 'package:smp/models/category.dart';
 import 'package:smp/services/spotify_service.dart';
 import 'package:smp/widgets/home_screen/grid.dart';

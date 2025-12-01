@@ -6,6 +6,9 @@ import 'package:smp/models/user_profile.dart';
 import 'package:smp/models/mood.dart';
 import 'package:smp/screens/home_screen/category_details_screen.dart';
 import 'package:smp/screens/login/login_screen.dart';
+import 'package:smp/screens/profile_screen/history_songs_screen.dart';
+import 'package:smp/screens/profile_screen/liked_songs_screen.dart';
+import 'package:smp/services/apiService.dart';
 import 'package:smp/widgets/profile_screen/change_password.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -66,6 +69,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
       setState(() {
         _profile.name = newName;
       });
+    }
+  }
+
+  Future<void> _onMoodSelected(Mood mood) async {
+    final user = FirebaseAuth.instance.currentUser;
+
+    // Inform backend about mood change
+    if (user != null) {
+      try {
+        await ApiService.updateUserMood(user.uid, mood.name);
+      } catch (e) {
+        debugPrint('Failed to update user mood: $e');
+      }
     }
   }
 
@@ -280,7 +296,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   const ChangePassword(),
                   const SizedBox(height: 16),
 
-                  // Playlists section
+                  // Playlists section -> Liked + History
                   Align(
                     alignment: Alignment.centerLeft,
                     child: Text(
@@ -289,24 +305,68 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ),
                   ),
                   const SizedBox(height: 8),
-                  ..._profile.playlists.map(
-                    (p) => Card(
-                      child: ListTile(
-                        leading: const Icon(Icons.playlist_play),
-                        title: Text(p.category.name),
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => CategoryDetailsScreen(
-                                music: p,
-                              ),
-                            ),
-                          );
-                        },
-                      ),
+
+// Liked songs
+                  Card(
+                    child: ListTile(
+                      leading: const Icon(Icons.favorite),
+                      title: const Text('Liked songs'),
+                      subtitle: const Text('Songs you liked'),
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const LikedSongsScreen(),
+                          ),
+                        );
+                      },
                     ),
                   ),
+
+// History
+                  Card(
+                    child: ListTile(
+                      leading: const Icon(Icons.history),
+                      title: const Text('Listening history'),
+                      subtitle: const Text('Songs you listened to recently'),
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const HistorySongsScreen(),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+
+                  // // Playlists section
+                  // Align(
+                  //   alignment: Alignment.centerLeft,
+                  //   child: Text(
+                  //     'Your playlists',
+                  //     style: Theme.of(context).textTheme.titleMedium,
+                  //   ),
+                  // ),
+                  // const SizedBox(height: 8),
+                  // ..._profile.playlists.map(
+                  //   (p) => Card(
+                  //     child: ListTile(
+                  //       leading: const Icon(Icons.playlist_play),
+                  //       title: Text(p.category.name),
+                  //       onTap: () {
+                  //         Navigator.push(
+                  //           context,
+                  //           MaterialPageRoute(
+                  //             builder: (context) => CategoryDetailsScreen(
+                  //               music: p,
+                  //             ),
+                  //           ),
+                  //         );
+                  //       },
+                  //     ),
+                  //   ),
+                  // ),
 
                   const SizedBox(height: 24),
 
