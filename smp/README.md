@@ -37,7 +37,7 @@ text - Custom mood category
 
 1. Ensure Git is installed by running `git --version`. Git can be found here if not already installed: https://git-scm.com/
 2. Clone the repository by running the following:
-   ``
+   `git@github.com:Marina-Safwat/SDD_Project.git`
 3. Navigate to file pubspec.yaml and add the required dependencies
    Run: flutter pub get ( for installing dependencies)
    flutter run (to run on emulator or browser)
