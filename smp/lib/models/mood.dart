@@ -1,13 +1,9 @@
 import 'package:flutter/material.dart';
 
 class Mood {
-  String name;
-  IconData icon;
-  Color color;
+  final String name;
+  final IconData icon;
+  final Color color;
 
-  Mood(
-    this.name,
-    this.icon,
-    this.color,
-  );
+  const Mood(this.name, this.icon, this.color);
 }

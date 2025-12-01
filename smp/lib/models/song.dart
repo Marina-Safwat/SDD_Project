@@ -23,19 +23,31 @@ class Song {
       name: (json['name'] ?? json['title'] ?? '').toString(),
       artists: List<String>.from(json['artists'] ?? []),
       album: json['album'] ?? '',
-      image: json['image_url'] ?? '',
-      audioUrl: json['audio_url'] ?? '', // fallback to empty string
+      
+      // Support multiple API field formats
+      image: json['image_url'] ??
+             json['image'] ??
+             '',
+             
+      audioUrl: json['audio_url'] ??
+                json['audio'] ??
+                '',
+                
       mood: json['mood'] ?? '',
     );
   }
+
   Map<String, dynamic> toJson() {
     return {
       "id": id,
       "title": name,
       "artists": artists,
       "album": album,
+      
+      // Always write the primary key format
       "image_url": image,
       "audio_url": audioUrl,
+      
       "mood": mood,
     };
   }
