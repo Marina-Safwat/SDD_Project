@@ -2,10 +2,11 @@
 
 ## Team Members
 
-Rachana Gaire
-Isaac Hollis
-Marina Safwat
+- Rachana Gaire  
+- Isaac Hollis  
+- Marina Safwat  
 
+---
 ## Features
 
 ### Mood-Based Music
@@ -22,16 +23,18 @@ Access liked songs collection
 
 ### Available Moods
 
-happy - Upbeat, joyful music
-sad - Melancholic, emotional songs
-chill - Relaxed, laid-back vibes
-energetic - High-energy, pumped-up tracks
-romantic - Love songs and ballads
-angry - Intense, aggressive music
-peaceful - Calm, serene sounds
-party - Dance and party music
-motivational - Inspiring, uplifting tracks
-text - Custom mood category
+- `happy` – Upbeat, joyful music  
+- `sad` – Melancholic, emotional songs  
+- `chill` – Relaxed, laid-back vibes  
+- `energetic` – High-energy, pumped-up tracks  
+- `romantic` – Love songs and ballads  
+- `angry` – Intense, aggressive music  
+- `peaceful` – Calm, serene sounds  
+- `party` – Dance and party music  
+- `motivational` – Inspiring, uplifting tracks  
+- `text` – Custom mood category (used as a generic/custom mood key)  
+
+---
 
 ### **Repository Setup**
 
@@ -64,14 +67,14 @@ text - Custom mood category
 
 ## Folder Structure
 
-├──data/ # static sample data, global collections for testing
-├── logic/ #authentication state, login flow
-├── models/ # data models used across the application
-├──screens/ # Contains all UI pages/screen
-├──services/ # external service handlers APIs from SMP server(digital ocean)
-└──widgets/ # UI components shared across multiple screens
+lib/
+├── data/        # Static sample data, global collections for testing
+├── logic/       # Authentication state, login flow and app logic
+├── models/      # Data models used across the application
+├── screens/     # UI pages/screens
+├── services/    # External service handlers (APIs from SMP server / backend)
+└── widgets/     # Reusable UI components shared across multiple screens
 
-```
 
 
 ## Key Directories
