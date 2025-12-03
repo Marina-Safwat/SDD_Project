@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
+import 'package:smp/data/data.dart';
 import 'package:smp/models/song.dart';
 
 /// Custom exception for API errors.
@@ -48,22 +49,57 @@ class SearchSongResponse {
   }
 }
 
-//for liked songs class LikedSongsResponse {
 class LikedSongsResponse {
   final bool success;
   final List<Song> songs;
 
-  LikedSongsResponse({required this.success, required this.songs});
+  LikedSongsResponse({
+    required this.success,
+    required this.songs,
+  });
 
   factory LikedSongsResponse.fromJson(Map<String, dynamic> json) {
-    final results = json['result'] as List<dynamic>? ?? [];
-    final songs = results.map((item) => Song.fromJson(item)).toList();
+    // 👇 Safely read the list from "result"
+    final raw = json['result'];
+
+    if (raw is! List) {
+      // Optional: you can log here
+      // debugPrint('LikedSongsResponse: "result" is not a List: $raw');
+      return LikedSongsResponse(
+        success: json['success'] == true,
+        songs: [],
+      );
+    }
+
+    // 👇 Only keep items that are actually Map<String, dynamic>
+    final songs = raw
+        .where((item) => item is Map<String, dynamic>)
+        .map((item) => Song.fromJson(item as Map<String, dynamic>))
+        .toList();
+
     return LikedSongsResponse(
       success: json['success'] == true,
       songs: songs,
     );
   }
 }
+
+//for liked songs class LikedSongsResponse {
+// class LikedSongsResponse {
+//   final bool success;
+//   final List<Song> songs;
+
+//   LikedSongsResponse({required this.success, required this.songs});
+
+//   factory LikedSongsResponse.fromJson(Map<String, dynamic> json) {
+//     final results = json['result'] as List<dynamic>? ?? [];
+//     final songs = results.map((item) => Song.fromJson(item)).toList();
+//     return LikedSongsResponse(
+//       success: json['success'] == true,
+//       songs: songs,
+//     );
+//   }
+// }
 
 /// Response model for history songs.
 class HistorySongResponse {
@@ -94,7 +130,15 @@ class ApiService {
 
   /// Enable/disable detailed logging.
   static bool enableLogging = true;
-
+  static List<Song> localSongs = [
+    testSong0,
+    testSong1,
+    testSong2,
+    testSong3,
+    testSong4,
+    testSong5,
+    testSong6
+  ];
   // ============================================================
   // LOGGING
   // ============================================================
@@ -213,7 +257,7 @@ class ApiService {
       if (data['success'] == true && data['result'] != null) {
         final results = data['result'] as List;
         final songs = results.map((item) => Song.fromJson(item)).toList();
-
+        // final songs = [...localSongs, ...apisongs].toList();
         _log('✅ Fetched ${songs.length} songs');
         return ApiResponse.success(songs);
       } else {

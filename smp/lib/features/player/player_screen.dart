@@ -4,6 +4,7 @@ import 'package:audioplayers/audioplayers.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:smp/data/data.dart';
 import 'package:smp/models/song.dart';
 import 'package:smp/services/api_service.dart';
 
@@ -88,6 +89,7 @@ class _PlayerScreenState extends State<PlayerScreen> {
 
   Future<void> _onFakeSongFinished() async {
     final user = FirebaseAuth.instance.currentUser;
+    historySong.add(widget.song);
 
     // If repeat is ON, just restart the timer and "song"
     if (isRepeatOn) {
@@ -146,6 +148,9 @@ class _PlayerScreenState extends State<PlayerScreen> {
   // ===================== LIKE / FAVORITE / DISLIKE =====================
 
   Future<void> _toggleLike() async {
+    debugPrint('❤️ im here');
+    likedSong.add(widget.song);
+
     final prefs = await SharedPreferences.getInstance();
     final likedSongs = prefs.getStringList('liked_songs') ?? [];
     final dislikedSongs = prefs.getStringList('disliked_songs') ?? [];
@@ -164,6 +169,8 @@ class _PlayerScreenState extends State<PlayerScreen> {
       isLiked = newLiked;
       isDisliked = newDisliked;
     });
+
+    debugPrint('❤️ $isLiked');
 
     if (newLiked) {
       if (!likedSongs.contains(widget.song.id)) {
@@ -188,6 +195,7 @@ class _PlayerScreenState extends State<PlayerScreen> {
     if (userId != null) {
       final mood = _currentMood();
       try {
+        debugPrint('❤️ im in');
         await ApiService.likeSong(userId, widget.song.id, mood, newLiked);
         if (wasDisliked != newDisliked) {
           await ApiService.dislikeSong(
