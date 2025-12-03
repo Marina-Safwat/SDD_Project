@@ -33,8 +33,10 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   Future<void> _signIn() async {
-    final email = _emailTextController.text.trim();
-    final password = _passwordTextController.text.trim();
+    final email = _emailTextController.text; //.trim();
+    final password = _passwordTextController.text; //.trim();
+    print(email);
+    print(password);
 
     // Basic validation before hitting Firebase.
     if (email.isEmpty || password.isEmpty) {
@@ -53,8 +55,10 @@ class _LoginScreenState extends State<LoginScreen> {
         email: email,
         password: password,
       );
+      print(email);
 
       final user = FirebaseAuth.instance.currentUser;
+      //final user = FirebaseAuth.instance.currentUser;
       if (user != null) {
         // Store/update user profile in the in-memory map.
         users[email] = UserProfile.fromFirebaseUser(user);

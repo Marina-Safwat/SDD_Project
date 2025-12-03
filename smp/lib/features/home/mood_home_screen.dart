@@ -36,6 +36,10 @@ class _MoodHomeScreenState extends State<MoodHomeScreen> {
   late Future<ApiResponse<Song>> _recommendedFuture;
   late String _currentMoodName;
 
+  void _likeSong() {
+    setState(() {});
+  }
+
   @override
   void initState() {
     super.initState();
@@ -72,14 +76,19 @@ class _MoodHomeScreenState extends State<MoodHomeScreen> {
     return ApiService.fetchHistory(userId: user.uid);
   }
 
-  Future<LikedSongsResponse> _buildLikedFuture() {
+  Future<LikedSongsResponse> _buildLikedFuture() async {
     final user = FirebaseAuth.instance.currentUser;
     if (user == null) {
+      debugPrint('❤️ Liked: no user logged in');
       return Future.value(
         LikedSongsResponse(success: false, songs: []),
       );
     }
-    return ApiService.fetchLikedSongs(userId: user.uid);
+    debugPrint('❤️ Fetching liked songs for user: ${user.uid}');
+    final res = await ApiService.fetchLikedSongs(userId: user.uid);
+    debugPrint(
+        '❤️ Liked response -> success: ${res.success}, count: ${res.songs.length}');
+    return res;
   }
 
   Future<void> _onMoodSelected(Mood mood) async {
@@ -344,6 +353,101 @@ class _MoodHomeScreenState extends State<MoodHomeScreen> {
 
                 const SizedBox(height: 16),
 
+                //   Padding(
+                //   padding: const EdgeInsets.symmetric(horizontal: 16),
+                //   child: Text(
+                //     'Songs for your mood: $_currentMoodName',
+                //     style: Theme.of(context).textTheme.titleLarge,
+                //   ),
+                // ),
+                // const SizedBox(height: 12),
+                // SizedBox(
+                //   height: 240,
+                //   child: ListView.builder(
+                //     scrollDirection: Axis.horizontal,
+                //     itemCount: likedSong.length,
+                //     padding: const EdgeInsets.symmetric(horizontal: 16),
+                //     itemBuilder: (context, index) {
+                //       final song = likedSong[index];
+                //       return GestureDetector(
+                //         onTap: () {
+                //           // 🔹 Pass song + full (shuffled) mood playlist + index
+                //           widget.onSongSelected(
+                //             song,
+                //             playlist: moodSongs,
+                //             index: index,
+                //           );
+                //         },
+                //         child: SongCard(
+                //           song: song,
+                //           onTap: (s) {
+                //             widget.onSongSelected(
+                //               s,
+                //               playlist: moodSongs,
+                //               index: index,
+                //             );
+                //           },
+                //         ),
+                //       );
+                //     },
+                //   ),
+                // ),
+
+                //Liked + History as you already have them...
+                // FutureBuilder<LikedSongsResponse>(
+                //   future: _buildLikedFuture(),
+                //   builder: (context, likedSnapshot) {
+                //     final isLoading = likedSnapshot.connectionState ==
+                //         ConnectionState.waiting;
+                //     final hasError = likedSnapshot.hasError;
+                //     final likedData = likedSnapshot.data;
+                //     final likedSongs = likedSong;
+
+                //     debugPrint('❤️ FB state: $isLoading, error: $hasError, '
+                //         'dataSuccess: ${likedData?.success}, songs: ${likedSongs.length}');
+
+                //     return Column(
+                //       crossAxisAlignment: CrossAxisAlignment.start,
+                //       children: [
+                //         Padding(
+                //           padding: const EdgeInsets.symmetric(horizontal: 16),
+                //           child: Text(
+                //             'Your liked songs',
+                //             style: Theme.of(context).textTheme.titleLarge,
+                //           ),
+                //         ),
+                //         const SizedBox(height: 12),
+                //         if (isLoading)
+                //           const Padding(
+                //             padding: EdgeInsets.symmetric(horizontal: 16),
+                //             child: SizedBox(
+                //               height: 40,
+                //               child: Center(
+                //                 child: CircularProgressIndicator(),
+                //               ),
+                //             ),
+                //           )
+                //         else if (hasError)
+                //           const Padding(
+                //             padding: EdgeInsets.symmetric(horizontal: 16),
+                //             child: Text('Could not load liked songs.'),
+                //           )
+                //         else if (!(likedData?.success ?? false) ||
+                //             likedSongs.isEmpty)
+                //           const Padding(
+                //             padding: EdgeInsets.symmetric(horizontal: 16),
+                //             child: SizedBox(
+                //               height: 140,
+                //               child: Center(
+                //                 child: Text(
+                //                   'You have not liked any songs yet.',
+                //                   textAlign: TextAlign.center,
+                //                   style: TextStyle(fontSize: 16),
+                //                 ),
+                //               ),
+                //             ),
+                //           )
+
                 // Liked + History as you already have them...
                 FutureBuilder<LikedSongsResponse>(
                   future: _buildLikedFuture(),
@@ -381,7 +485,7 @@ class _MoodHomeScreenState extends State<MoodHomeScreen> {
                             child: Text('Could not load liked songs.'),
                           )
                         else if (!(likedData?.success ?? false) ||
-                            likedSongs.isEmpty)
+                            likedSong.isEmpty)
                           const Padding(
                             padding: EdgeInsets.symmetric(horizontal: 16),
                             child: SizedBox(
@@ -402,9 +506,9 @@ class _MoodHomeScreenState extends State<MoodHomeScreen> {
                               scrollDirection: Axis.horizontal,
                               padding:
                                   const EdgeInsets.symmetric(horizontal: 16),
-                              itemCount: likedSongs.length,
+                              itemCount: likedSong.length,
                               itemBuilder: (context, index) {
-                                final song = likedSongs[index];
+                                final song = likedSong[index];
                                 return GestureDetector(
                                   onTap: () => widget.onSongSelected(song),
                                   child: SongCard(
@@ -422,80 +526,80 @@ class _MoodHomeScreenState extends State<MoodHomeScreen> {
 
                 const SizedBox(height: 24),
 
-                FutureBuilder<HistorySongResponse>(
-                  future: _buildHistoryFuture(),
-                  builder: (context, historySnapshot) {
-                    final isLoading = historySnapshot.connectionState ==
-                        ConnectionState.waiting;
-                    final hasError = historySnapshot.hasError;
-                    final historyData = historySnapshot.data;
-                    final historySongs = historyData?.songs ?? [];
+                // FutureBuilder<HistorySongResponse>(
+                //   future: _buildHistoryFuture(),
+                //   builder: (context, historySnapshot) {
+                //     final isLoading = historySnapshot.connectionState ==
+                //         ConnectionState.waiting;
+                //     final hasError = historySnapshot.hasError;
+                //     final historyData = historySnapshot.data;
+                //     final localSongs = historyData?.songs ?? [];
 
-                    return Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 16),
-                          child: Text(
-                            'Your listening history',
-                            style: Theme.of(context).textTheme.titleLarge,
-                          ),
-                        ),
-                        const SizedBox(height: 12),
-                        if (isLoading)
-                          const Padding(
-                            padding: EdgeInsets.symmetric(horizontal: 16),
-                            child: SizedBox(
-                              height: 40,
-                              child: Center(
-                                child: CircularProgressIndicator(),
-                              ),
-                            ),
-                          )
-                        else if (hasError)
-                          const Padding(
-                            padding: EdgeInsets.symmetric(horizontal: 16),
-                            child: Text('Could not load history.'),
-                          )
-                        else if (!(historyData?.success ?? false) ||
-                            historySongs.isEmpty)
-                          const Padding(
-                            padding: EdgeInsets.symmetric(horizontal: 16),
-                            child: SizedBox(
-                              height: 140,
-                              child: Center(
-                                child: Text(
-                                  'No listening history yet.',
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(fontSize: 16),
-                                ),
-                              ),
-                            ),
-                          )
-                        else
-                          SizedBox(
-                            height: 240,
-                            child: ListView.builder(
-                              scrollDirection: Axis.horizontal,
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 16),
-                              itemCount: historySongs.length,
-                              itemBuilder: (context, index) {
-                                final song = historySongs[index];
-                                return GestureDetector(
-                                  onTap: () => widget.onSongSelected(song),
-                                  child: SongCard(
-                                    song: song,
-                                    onTap: widget.onSongSelected,
-                                  ),
-                                );
-                              },
-                            ),
-                          ),
-                      ],
-                    );
-                  },
-                ),
+                //     return Column(
+                //       crossAxisAlignment: CrossAxisAlignment.start,
+                //       children: [
+                //         Padding(
+                //           padding: const EdgeInsets.symmetric(horizontal: 16),
+                //           child: Text(
+                //             'Your listening history',
+                //             style: Theme.of(context).textTheme.titleLarge,
+                //           ),
+                //         ),
+                //         const SizedBox(height: 12),
+                //         if (isLoading)
+                //           const Padding(
+                //             padding: EdgeInsets.symmetric(horizontal: 16),
+                //             child: SizedBox(
+                //               height: 40,
+                //               child: Center(
+                //                 child: CircularProgressIndicator(),
+                //               ),
+                //             ),
+                //           )
+                //         else if (hasError)
+                //           const Padding(
+                //             padding: EdgeInsets.symmetric(horizontal: 16),
+                //             child: Text('Could not load history.'),
+                //           )
+                //         else if (!(historyData?.success ?? false) ||
+                //             localSongs.isEmpty)
+                //           const Padding(
+                //             padding: EdgeInsets.symmetric(horizontal: 16),
+                //             child: SizedBox(
+                //               height: 140,
+                //               child: Center(
+                //                 child: Text(
+                //                   'No listening history yet.',
+                //                   textAlign: TextAlign.center,
+                //                   style: TextStyle(fontSize: 16),
+                //                 ),
+                //               ),
+                //             ),
+                //           )
+                //         else
+                //           SizedBox(
+                //             height: 240,
+                //             child: ListView.builder(
+                //               scrollDirection: Axis.horizontal,
+                //               padding:
+                //                   const EdgeInsets.symmetric(horizontal: 16),
+                //               itemCount: localSongs.length,
+                //               itemBuilder: (context, index) {
+                //                 final song = localSongs[index];
+                //                 return GestureDetector(
+                //                   onTap: () => widget.onSongSelected(song),
+                //                   child: SongCard(
+                //                     song: song,
+                //                     onTap: widget.onSongSelected,
+                //                   ),
+                //                 );
+                //               },
+                //             ),
+                //           ),
+                //       ],
+                //     );
+                //   },
+                // ),
               ],
             ),
           );
